@@ -1,0 +1,17 @@
+@import url('https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap');
+
+:root {
+    --color-bg: rgb(230, 230, 230);
+    --font-title: 'Indie Flower', cursive;
+}
+
+body {
+    background-color: var(--color-bg);
+}
+
+.title {
+    font-family: var(--font-title);
+    font-size: 3rem;
+    text-align: center;
+    margin-top: 2rem;
+}
