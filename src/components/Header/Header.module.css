@@ -3,18 +3,25 @@
     background-image: url('/src/imgs/paper-texture.jpg');
     background-blend-mode: multiply;
     background-size: cover;
+
     padding: 1rem;
     padding-left: 2rem;
-
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 2rem;
 
     -webkit-user-select: none; /* Safari */
     user-select: none;
 
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.headerLink {
+    width: fit-content;
+    
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 2rem;
+    
+    text-decoration: none;
 }
 
 .header h1 {

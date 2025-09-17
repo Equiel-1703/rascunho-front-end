@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Header from "./components/Header/Header.jsx";
+import Footer from "./components/Footer/Footer.jsx";
 import Home from "./components/Home/Home.jsx";
 import Login from "./components/Login/Login.jsx";
 
@@ -21,6 +22,7 @@ function App() {
           element={<Login />}
         />
       </Routes>
+      <Footer />
     </BrowserRouter>
   );
 }
