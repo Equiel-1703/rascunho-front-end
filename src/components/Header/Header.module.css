@@ -4,6 +4,7 @@
     background-blend-mode: multiply;
     background-size: cover;
     padding: 1rem;
+    padding-left: 2rem;
 
     display: flex;
     flex-direction: row;
@@ -20,7 +21,7 @@
     margin: 0;
 
     font-family: var(--font-title);
-    font-size: 5rem;
+    font-size: var(--font-title-size);
     font-weight: 400;
 
     color: white;

@@ -2,12 +2,22 @@
     --color-bg: rgb(255, 234, 216);
     --color-header: rgb(93, 47, 119);
     --font-title: 'Indie Flower', cursive;
+    --font-title-size: 5rem;
 }
 
 body {
     margin: 0;
     padding: 0;
     background-color: var(--color-bg);
+}
+
+/* Global main element styles */
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
 }
 
 /* Fonts */

@@ -15,6 +15,7 @@ function App() {
           element={<Home />}
         />
 
+        {/* Login page */}
         <Route
           path="/login"
           element={<Login />}
