@@ -1,5 +1,6 @@
 :root {
-    --color-bg: rgb(230, 230, 230);
+    --color-bg: rgb(255, 234, 216);
+    --color-header: rgb(93, 47, 119);
     --font-title: 'Indie Flower', cursive;
 }
 

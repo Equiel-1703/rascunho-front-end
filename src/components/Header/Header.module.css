@@ -1,5 +1,7 @@
-header {
+.header {
+    background-color: var(--color-header);
     background-image: url('/src/imgs/paper-texture.jpg');
+    background-blend-mode: multiply;
     background-size: cover;
     padding: 1rem;
 
@@ -14,15 +16,17 @@ header {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-header h1 {
+.header h1 {
     margin: 0;
 
     font-family: var(--font-title);
     font-size: 5rem;
     font-weight: 400;
+
+    color: white;
 }
 
-header img {
+.header img {
     width: 100px;
     height: 100px;
     border-radius: 50%;

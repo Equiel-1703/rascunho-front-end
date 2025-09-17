@@ -1,13 +1,26 @@
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
 import Header from "./components/Header/Header.jsx";
+import Home from "./components/Home/Home.jsx";
+import Login from "./components/Login/Login.jsx";
 
 function App() {
   return (
-    <>
+    <BrowserRouter>
       <Header />
-      <main>
-        <h2 className="subtitle">This is the main content of the app.</h2>
-      </main>
-    </>
+      <Routes>
+        {/* Home page */}
+        <Route
+          path="/"
+          element={<Home />}
+        />
+
+        <Route
+          path="/login"
+          element={<Login />}
+        />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
