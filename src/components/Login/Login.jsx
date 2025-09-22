@@ -1,6 +1,6 @@
 import styles from './Login.module.css';
 
-import ApiClient, { ValidationErrors, BadCredentialsError } from '../../utils/ApiClient';
+import BackendApi, { ValidationErrors, BadCredentialsError } from '../../utils/BackendApi';
 import { useState } from 'react';
 
 function Login() {
@@ -12,10 +12,12 @@ function Login() {
         event.preventDefault();
         setErrors({}); // Clear previous errors
 
-        ApiClient.setDebugMode(true);
+        BackendApi.setDebugMode(true);
 
         try {
-            await ApiClient.attemptLogin(username, password);
+            const authToken = await BackendApi.attemptLogin(username, password);
+
+            localStorage.setItem('authToken', authToken);
         } catch (error) {
             if (error instanceof ValidationErrors) {
                 console.warn('[Login component] Validation errors:', error.validationErrors);
