@@ -1,6 +1,6 @@
 import styles from './Login.module.css';
 
-import BackendApi, { ValidationErrors, BadCredentialsError } from '../../utils/BackendApi';
+import BackendApi, { ValidationErrors, BadCredentialsError } from '../../services/BackendApi';
 import { useState } from 'react';
 
 function Login() {
