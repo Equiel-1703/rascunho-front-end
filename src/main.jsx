@@ -11,7 +11,7 @@ const htmlRoot = document.getElementById('root');
 const root = createRoot(htmlRoot);
 
 root.render(
-  <StrictMode>
+  // <StrictMode>
     <App />
-  </StrictMode>,
+  // </StrictMode>,
 );

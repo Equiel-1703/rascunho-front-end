@@ -1,4 +1,4 @@
-import { StatusCodes } from "http-status-codes";
+import { StatusCodes, getReasonPhrase } from 'http-status-codes';
 
 class ValidationErrors extends Error {
     constructor(message, errors = []) {
@@ -22,8 +22,10 @@ class BadCredentialsError extends Error {
  * It includes functionality for user authentication and error handling.
  */
 class BackendApi {
-    #baseUrl = 'http://localhost:8080/api';
+    #baseUrl = 'https://localhost:8443/api';
     #debug = false;
+
+    #authTokenKey = 'authToken';
 
     /**
      * Enables or disables debug mode.
@@ -37,9 +39,15 @@ class BackendApi {
     /**
      * Attempts to log in a user with the provided username and password.
      * 
+     * If the login is successful, the authentication token is stored in local storage.
+     * 
+     * In case of validation errors, a ValidationErrors exception is thrown containing the validation errors from the server.
+     * If the credentials are incorrect, a BadCredentialsError exception is thrown.
+     * For other errors, a generic Error is thrown with the status code.
+     * 
      * @param {string} username - The username of the user.
      * @param {string} password - The password of the user.
-     * @returns {Promise<string>} A promise that resolves to the authentication token if login is successful.
+     * @returns {Promise<void>} A promise that resolves if the login is successful.
      * @throws {ValidationErrors} If there are validation errors from the server.
      * @throws {BadCredentialsError} If the username or password is incorrect.
      * @throws {Error} If the login fails for other reasons.
@@ -48,6 +56,7 @@ class BackendApi {
         const jsonBody = JSON.stringify({ username, password });
 
         if (this.#debug) {
+            console.log('[BackendApi] Attempting to login user.');
             console.log('[BackendApi] Request URL:', `${this.#baseUrl}/auth/login`);
             console.log('[BackendApi] Request Body:', jsonBody);
         }
@@ -61,12 +70,25 @@ class BackendApi {
         });
 
         if (response.ok) {
+            const bodyJson = await response.json();
+
+            console.log('[BackendApi] Full server response body:', bodyJson);
+
+            const token = bodyJson.token;
+
+            // Store the authentication token in local storage
+            localStorage.setItem(this.#authTokenKey, token);
+
             if (this.#debug) {
                 console.log('[BackendApi] Login successful!');
+                console.log('[BackendApi] Received auth token:', token);
             }
 
-            const bodyJson = await response.json();
-            return bodyJson.token; // Return the authentication token
+            // Reading token back from local storage to confirm it was stored correctly
+            const storedToken = localStorage.getItem(this.#authTokenKey);
+            console.log('[BackendApi] Token read from local storage after login:', storedToken);
+
+            return;
         }
         // A bad request indicates validation errors
         else if (response.status === StatusCodes.BAD_REQUEST) {
@@ -87,32 +109,37 @@ class BackendApi {
         }
         // Other errors
         else {
-            throw new Error(`Login failed with status: ${response.status}`);
+            throw new Error(`Login failed with status: ${response.status} (${getReasonPhrase(response.status)})`);
         }
     }
 
     /**
-     * Checks if the user is currently logged in by verifying the presence of an authentication token in local storage
-     * and sending a POST request to the server to validate the token.
+     * Checks if the user is currently logged in by verifying the presence of an authentication token in local storage.
+     * If present, it validates the token by sending a POST request to the server to validate it.
      * 
      * @returns {Promise<Object>} A promise that resolves to an object containing:
-     *                            - isLoggedIn: boolean indicating if the user is logged in
+     *                            - loggedIn: boolean indicating if the user is logged in
      *                            - username: the username of the logged-in user (null if not logged in)
      */
     async isUserLoggedIn() {
-        const token = localStorage.getItem('authToken');
-        
-        let isLoggedIn = false;
+        const token = localStorage.getItem(this.#authTokenKey);
+        console.log('[BackendApi] Token read from local storage in isUserLoggedIn():', token);
+
+        let loggedIn = false;
         let username = null;
 
-        // If the auth token is not present, the user is certainly not logged in
-        if (!token) {
-            return { isLoggedIn, username };
+        if (!token || token === 'undefined' || token === undefined) {
+            // If the token is not present or is undefined, the user is not logged in
+            if (this.#debug) {
+                console.log('[BackendApi] Token not found or undefined in local storage');
+            }
+
+            return { loggedIn, username };
         }
 
         if (this.#debug) {
-            console.log('[BackendApi] Request URL:', `${this.#baseUrl}/auth/me`);
             console.log('[BackendApi] Validating auth token:', token);
+            console.log('[BackendApi] Request URL:', `${this.#baseUrl}/auth/me`);
         }
 
         const response = await fetch(`${this.#baseUrl}/auth/me`, {
@@ -126,10 +153,10 @@ class BackendApi {
         if (response.ok) {
             const bodyJson = await response.json();
 
-            isLoggedIn = true;
+            loggedIn = true;
             username = bodyJson.username;
 
-            return { isLoggedIn, username };
+            return { loggedIn, username };
         } else {
             if (this.#debug) {
                 console.warn('[BackendApi] Auth token is invalid or expired');
@@ -139,9 +166,60 @@ class BackendApi {
             // and return false
             localStorage.removeItem('authToken');
 
-            return { isLoggedIn, username };
+            return { loggedIn, username };
+        }
+    }
+
+    /**
+     * Attempts to refresh the authentication token using the refresh http-only cookie.
+     * 
+     * @returns {Promise<void>} A promise that resolves if the token is refreshed successfully.
+     * @throws {BadCredentialsError} If the refresh token cookie is invalid or expired.
+     * @throws {Error} If the token refresh fails for other reasons.
+     */
+    async refreshAuthToken() {
+        if (this.#debug) {
+            console.log('[BackendApi] Attempting to refresh auth token using refresh cookie');
+            console.log('[BackendApi] Request URL:', `${this.#baseUrl}/auth/refresh`);
         }
 
+        const response = await fetch(`${this.#baseUrl}/auth/refresh`, {
+            method: 'POST',
+            credentials: 'include', // Include cookies in the request
+            body: null
+        });
+
+        if (response.ok) {
+            const bodyJson = await response.json();
+            const newToken = bodyJson.token;
+
+            // Store the new token in local storage
+            localStorage.setItem(this.#authTokenKey, newToken);
+
+            if (this.#debug) {
+                console.log('[BackendApi] Token refreshed successfully!');
+                console.log('[BackendApi] New auth token:', newToken);
+            }
+
+            return;
+        } else if (response.status === StatusCodes.UNAUTHORIZED) {
+            if (this.#debug) {
+                console.warn('[BackendApi] Refresh token is invalid or expired');
+            }
+
+            // If the refresh token is invalid or expired, remove the auth token from local storage
+            // (if it exists) and throw an error
+            localStorage.removeItem(this.#authTokenKey);
+
+            throw new BadCredentialsError('Refresh token is invalid or expired');
+        } else {
+            throw new Error(`Token refresh failed with status: ${response.status} (${getReasonPhrase(response.status)})`);
+        }
+
+    }
+
+    async logout() {
+        localStorage.removeItem(this.#authTokenKey);
     }
 }
 

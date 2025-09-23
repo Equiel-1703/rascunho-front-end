@@ -15,20 +15,21 @@ function Login() {
         BackendApi.setDebugMode(true);
 
         try {
-            const authToken = await BackendApi.attemptLogin(username, password);
+            await BackendApi.attemptLogin(username, password);
 
-            localStorage.setItem('authToken', authToken);
+            // Just to debug
+            alert('Login successful! You can now access protected resources.');
         } catch (error) {
             if (error instanceof ValidationErrors) {
-                console.warn('[Login component] Validation errors:', error.validationErrors);
+                console.warn('[Login component] Validation errors: ', error.validationErrors);
                 setErrors(error.validationErrors);
             }
             else if (error instanceof BadCredentialsError) {
-                console.warn('[Login component] Bad credentials:', error.message);
+                console.warn('[Login component] Bad credentials: ', error.message);
                 setErrors({ password: error.message }); // Show error near password field
             }
             else {
-                console.error('[Login component] Error:', error.message);
+                console.error('[Login component] Error: ', error.message);
             }
         }
     }
