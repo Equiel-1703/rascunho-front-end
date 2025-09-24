@@ -66,7 +66,20 @@ function Home() {
         <main className={styles.main}>
             {
                 username ? (
-                    <p>Welcome back, {username}!</p>
+                    <>
+                        <p>Welcome back, {username}!</p>
+                        <button
+                            className={styles.btn}
+                            onClick={
+                                async () => {
+                                    await BackendApi.logout();
+                                    setUsername(null);
+                                }
+                            }
+                        >
+                            Log out
+                        </button>
+                    </>
                 ) : (
                     <button
                         className={styles.btn}

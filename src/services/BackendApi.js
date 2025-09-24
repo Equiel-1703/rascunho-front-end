@@ -66,14 +66,12 @@ class BackendApi {
             headers: {
                 'Content-Type': 'application/json'
             },
+            credentials: 'include', // Cookies will received
             body: jsonBody
         });
 
         if (response.ok) {
             const bodyJson = await response.json();
-
-            console.log('[BackendApi] Full server response body:', bodyJson);
-
             const token = bodyJson.token;
 
             // Store the authentication token in local storage
@@ -81,12 +79,7 @@ class BackendApi {
 
             if (this.#debug) {
                 console.log('[BackendApi] Login successful!');
-                console.log('[BackendApi] Received auth token:', token);
             }
-
-            // Reading token back from local storage to confirm it was stored correctly
-            const storedToken = localStorage.getItem(this.#authTokenKey);
-            console.log('[BackendApi] Token read from local storage after login:', storedToken);
 
             return;
         }
@@ -123,7 +116,6 @@ class BackendApi {
      */
     async isUserLoggedIn() {
         const token = localStorage.getItem(this.#authTokenKey);
-        console.log('[BackendApi] Token read from local storage in isUserLoggedIn():', token);
 
         let loggedIn = false;
         let username = null;
@@ -138,7 +130,7 @@ class BackendApi {
         }
 
         if (this.#debug) {
-            console.log('[BackendApi] Validating auth token:', token);
+            console.log('[BackendApi] Validating auth token in backend');
             console.log('[BackendApi] Request URL:', `${this.#baseUrl}/auth/me`);
         }
 
@@ -159,11 +151,9 @@ class BackendApi {
             return { loggedIn, username };
         } else {
             if (this.#debug) {
-                console.warn('[BackendApi] Auth token is invalid or expired');
+                console.warn('[BackendApi] Auth token is invalid or expired. Removing from local storage.');
             }
 
-            // If the token is invalid or expired, remove it from local storage
-            // and return false
             localStorage.removeItem('authToken');
 
             return { loggedIn, username };
@@ -198,28 +188,59 @@ class BackendApi {
 
             if (this.#debug) {
                 console.log('[BackendApi] Token refreshed successfully!');
-                console.log('[BackendApi] New auth token:', newToken);
             }
 
             return;
         } else if (response.status === StatusCodes.UNAUTHORIZED) {
             if (this.#debug) {
-                console.warn('[BackendApi] Refresh token is invalid or expired');
+                console.warn('[BackendApi] Refresh cookie is invalid or expired');
             }
 
-            // If the refresh token is invalid or expired, remove the auth token from local storage
+            // If the refresh cookie is invalid or expired, it makes sense to also remove the auth token
             // (if it exists) and throw an error
             localStorage.removeItem(this.#authTokenKey);
 
-            throw new BadCredentialsError('Refresh token is invalid or expired');
+            throw new BadCredentialsError('Refresh cookie is invalid or expired');
         } else {
-            throw new Error(`Token refresh failed with status: ${response.status} (${getReasonPhrase(response.status)})`);
+            throw new Error(`Auth token refresh failed with status: ${response.status} (${getReasonPhrase(response.status)})`);
         }
 
     }
 
+    /**
+     * Logs out the user by removing the authentication token from local storage and invalidating the refresh token cookie.
+     * 
+     * @returns {Promise<void>} A promise that resolves if the logout is successful.
+     * @throws {Error} If the logout request fails for any reason.
+     */
     async logout() {
         localStorage.removeItem(this.#authTokenKey);
+
+        if (this.#debug) {
+            console.log('[BackendApi] Logging out user');
+            console.log('[BackendApi] Request URL:', `${this.#baseUrl}/auth/logout`);
+        }
+
+        const response = await fetch(`${this.#baseUrl}/auth/logout`, {
+            method: 'POST',
+            credentials: 'include', // Include cookies in the request
+            body: null
+        });
+
+        if (response.ok) {
+            if (this.#debug) {
+                console.log('[BackendApi] User logged out successfully');
+            }
+
+            return;
+        } else {
+            if (this.#debug) {
+                console.warn('[BackendApi] Logout request failed');
+            }
+
+            throw new Error(`Logout failed with status: ${response.status} (${getReasonPhrase(response.status)})`);
+        }
+
     }
 }
 
