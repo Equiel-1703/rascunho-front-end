@@ -1,35 +1,34 @@
 import styles from './Login.module.css';
 
-import BackendApi, { ValidationErrors, BadCredentialsError } from '../../services/BackendApi';
+import { ValidationErrors, BadCredentialsError } from '../../services/BackendApi';
 import { useState } from 'react';
+import { useAuthContext } from '../AuthContext/AuthContext';
 
 function Login() {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
+    const [loginUsername, setLoginUsername] = useState('');
+    const [loginPassword, setLoginPassword] = useState('');
     const [errors, setErrors] = useState({});
+
+    const authContext = useAuthContext();
 
     const submitLogin = async (event) => {
         event.preventDefault();
         setErrors({}); // Clear previous errors
 
-        BackendApi.setDebugMode(true);
-
         try {
-            await BackendApi.attemptLogin(username, password);
+            await authContext.login(loginUsername, loginPassword);
 
             // Just to debug
             alert('Login successful! You can now access protected resources.');
         } catch (error) {
             if (error instanceof ValidationErrors) {
-                console.warn('[Login component] Validation errors: ', error.validationErrors);
                 setErrors(error.validationErrors);
             }
             else if (error instanceof BadCredentialsError) {
-                console.warn('[Login component] Bad credentials: ', error.message);
-                setErrors({ password: error.message }); // Show error near password field
+                setErrors({ password: error.message }); // This will show error near password field
             }
             else {
-                console.error('[Login component] Error: ', error.message);
+                alert('An unexpected error occurred. Please try again later.\nError details: ' + error.message);
             }
         }
     }
@@ -45,8 +44,8 @@ function Login() {
                         type='text'
                         name='username'
                         placeholder='Username'
-                        onChange={(e) => setUsername(e.target.value)}
-                        value={username}
+                        onChange={(e) => setLoginUsername(e.target.value)}
+                        value={loginUsername}
                     />
                     {errors.username && (
                         <div className={styles.error}>
@@ -63,8 +62,8 @@ function Login() {
                         type='password'
                         name='password'
                         placeholder='Password'
-                        onChange={(e) => setPassword(e.target.value)}
-                        value={password}
+                        onChange={(e) => setLoginPassword(e.target.value)}
+                        value={loginPassword}
                     />
                     {errors.password && (
                         <div className={styles.error}>
