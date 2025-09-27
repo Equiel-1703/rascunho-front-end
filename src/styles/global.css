@@ -1,8 +1,15 @@
+@import url('https://fonts.googleapis.com/css2?family=Homemade+Apple&display=swap');
+
 :root {
     --color-bg: rgb(255, 234, 216);
     --color-header: rgb(93, 47, 119);
+    
     --font-title: 'Indie Flower', cursive;
     --font-title-size: 5rem;
+
+    --font-body-size: 14pt;
+    
+    --font-username: 'Homemade Apple', cursive;
 }
 
 body {
