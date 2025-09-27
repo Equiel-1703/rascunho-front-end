@@ -48,12 +48,12 @@ function AuthContext({ children }) {
                     if (checkLoginResultAfterRefresh.loggedIn) {
                         setLoggedUsername(checkLoginResultAfterRefresh.username);
                     } else {
-                        setLoggedUsername(null); // This is a placeholder, later we will redirect to the login page
+                        setLoggedUsername(null);
                     }
                 } catch (error) {
                     if (error instanceof BadCredentialsError) {
                         // The refresh token is invalid or expired, the user should log in again
-                        setLoggedUsername(null); // This is a placeholder, later we will redirect to the login page
+                        setLoggedUsername(null);
                     } else {
                         setLoggedUsername(null);
                         alert('An unexpected error occurred. Please try again later.\nError details: ' + error.message);
