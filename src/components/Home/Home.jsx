@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 import { useAuthContext } from '../AuthContext/AuthContext.jsx';
 import Loading from '../Loading/Loading.jsx';
+import Notebook from '../Notebook/Notebook.jsx';
 
 function Home() {
     const navigate = useNavigate();
@@ -18,19 +19,20 @@ function Home() {
         );
     }
 
+    if (authContext.unexpectedError) {
+        return (
+            <main className={styles.main}>
+                <p>{"Um erro inesperado aconteceu :("}</p>
+                <p>Por favor, tente mais tarde!</p>
+            </main>
+        );
+    }
+
     return (
         <main className={styles.main}>
             {
                 (authContext.loggedUsername !== null) ? (
-                    <>
-                        <p>Welcome back, {authContext.loggedUsername}!</p>
-                        <button
-                            className={styles.btn}
-                            onClick={async () => await authContext.logout()}
-                        >
-                            Log out
-                        </button>
-                    </>
+                    <Notebook />
                 ) : (
                     <button
                         className={styles.btn}

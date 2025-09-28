@@ -11,6 +11,7 @@ function useAuthContext() {
 function AuthContext({ children }) {
     const [loggedUsername, setLoggedUsername] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [unexpectedError, setUnexpectedError] = useState(false);
 
     // This function will run only once, when the component is mounted
     // Its purpose is to check if the user is logged in or not
@@ -29,8 +30,19 @@ function AuthContext({ children }) {
         const handleAuth = async () => {
             BackendApi.setDebugMode(true);
 
-            // We start by checking if the user is logged in
-            const checkLoginResult = await BackendApi.isUserLoggedIn();
+            let checkLoginResult;
+
+            try {
+                // We start by checking if the user is logged in
+                checkLoginResult = await BackendApi.isUserLoggedIn();
+            } catch (error) {
+                console.error("An unexpected error occurred while checking if the user is logged in: ", error);
+
+                setUnexpectedError(true);
+                setLoading(false);
+
+                return;
+            }
 
             // If the user is logged in, set the username
             if (checkLoginResult.loggedIn) {
@@ -48,15 +60,18 @@ function AuthContext({ children }) {
                     if (checkLoginResultAfterRefresh.loggedIn) {
                         setLoggedUsername(checkLoginResultAfterRefresh.username);
                     } else {
-                        setLoggedUsername(null);
+                        console.error("Something very weird happened. We refreshed the auth token but the user is still not logged in");
+
+                        setUnexpectedError(true);
                     }
                 } catch (error) {
                     if (error instanceof BadCredentialsError) {
                         // The refresh token is invalid or expired, the user should log in again
                         setLoggedUsername(null);
                     } else {
-                        setLoggedUsername(null);
-                        alert('An unexpected error occurred. Please try again later.\nError details: ' + error.message);
+                        console.error("An unexpected error occurred while trying to refresh the auth token: ", error);
+
+                        setUnexpectedError(true);
                     }
                 }
             }
@@ -85,6 +100,7 @@ function AuthContext({ children }) {
         setLoggedUsername,
         loading,
         setLoading,
+        unexpectedError,
         login,
         logout
     };
