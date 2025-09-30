@@ -22,8 +22,10 @@ function Home() {
     if (authContext.unexpectedError) {
         return (
             <main className={styles.main}>
-                <p>{"Um erro inesperado aconteceu :("}</p>
-                <p>Por favor, tente mais tarde!</p>
+                <div className={styles.unexpectedError}>
+                    <p>{"Um erro inesperado aconteceu =("}</p>
+                    <p>Por favor, tente mais tarde!</p>
+                </div>
             </main>
         );
     }
