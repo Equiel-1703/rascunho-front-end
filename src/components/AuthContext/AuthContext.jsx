@@ -99,13 +99,16 @@ function AuthContext({ children }) {
     const logout = async () => {
         await BackendApi.logout();
 
-        // Clear logged username if logout is successful
+        // Clear logged username and userId if logout is successful
         setLoggedUsername(null);
+        setLoggedUserId(null);
     }
 
     const value = {
         loggedUsername,
         setLoggedUsername,
+        loggedUserId,
+        setLoggedUserId,
         loading,
         setLoading,
         unexpectedError,

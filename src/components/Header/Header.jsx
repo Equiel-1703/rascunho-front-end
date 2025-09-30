@@ -1,11 +1,12 @@
 import styles from './Header.module.css';
 
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { useAuthContext } from '../AuthContext/AuthContext.jsx';
 
 function Header() {
     const authContext = useAuthContext();
+    const navigate = useNavigate();
 
     return (
         <header className={styles.header}>
@@ -20,7 +21,14 @@ function Header() {
                     <p>{authContext.loggedUsername}</p>
                     <button
                         className={styles.logoutButton}
-                        onClick={authContext.logout}
+                        onClick={
+                            async () => {
+                                await authContext.logout();
+
+                                // Redirect to home page after logout
+                                navigate('/');
+                            }
+                        }
                     >
                         <img src="/src/imgs/exit.png" alt="" />
                     </button>
