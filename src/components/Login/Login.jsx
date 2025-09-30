@@ -1,7 +1,9 @@
 import styles from './Login.module.css';
 
-import { ValidationErrors, BadCredentialsError } from '../../services/BackendApi';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+import { ValidationErrors, BadCredentialsError } from '../../services/BackendApi';
 import { useAuthContext } from '../AuthContext/AuthContext';
 
 function Login() {
@@ -9,6 +11,7 @@ function Login() {
     const [loginPassword, setLoginPassword] = useState('');
     const [errors, setErrors] = useState({});
 
+    const navigate = useNavigate();
     const authContext = useAuthContext();
 
     const submitLogin = async (event) => {
@@ -18,8 +21,8 @@ function Login() {
         try {
             await authContext.login(loginUsername, loginPassword);
 
-            // Just to debug
-            alert('Login successful! You can now access protected resources.');
+            // Redirect to home page after successful login
+            navigate('/');
         } catch (error) {
             if (error instanceof ValidationErrors) {
                 setErrors(error.validationErrors);
