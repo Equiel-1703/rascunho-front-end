@@ -10,6 +10,8 @@ function useAuthContext() {
 
 function AuthContext({ children }) {
     const [loggedUsername, setLoggedUsername] = useState(null);
+    const [loggedUserId, setLoggedUserId] = useState(null);
+
     const [loading, setLoading] = useState(true);
     const [unexpectedError, setUnexpectedError] = useState(false);
 
@@ -47,6 +49,7 @@ function AuthContext({ children }) {
             // If the user is logged in, set the username
             if (checkLoginResult.loggedIn) {
                 setLoggedUsername(checkLoginResult.username);
+                setLoggedUserId(checkLoginResult.userId);
             } else {
                 try {
                     // If the user is not logged in, we will try to refresh the auth token
@@ -55,19 +58,24 @@ function AuthContext({ children }) {
                     // If the token is refreshed successfully, the user should be logged in now
                     const checkLoginResultAfterRefresh = await BackendApi.isUserLoggedIn();
 
-                    // If this fails, something very weird happened
+                    // If this fails without throwing any exception, something very weird happened
                     // May God have mercy on us all
                     if (checkLoginResultAfterRefresh.loggedIn) {
                         setLoggedUsername(checkLoginResultAfterRefresh.username);
+                        setLoggedUserId(checkLoginResultAfterRefresh.userId);
                     } else {
                         console.error("Something very weird happened. We refreshed the auth token but the user is still not logged in");
+
+                        // Let's log the user out just for good measure
+                        // Perhaps the token is broken some way we couldn't detect
+                        await BackendApi.logout();
 
                         setUnexpectedError(true);
                     }
                 } catch (error) {
                     if (error instanceof BadCredentialsError) {
                         // The refresh token is invalid or expired, the user should log in again
-                        setLoggedUsername(null);
+                        // Nothing to do here, just don't set the username or userId and we're good
                     } else {
                         console.error("An unexpected error occurred while trying to refresh the auth token: ", error);
 

@@ -113,12 +113,17 @@ class BackendApi {
      * @returns {Promise<Object>} A promise that resolves to an object containing:
      *                            - loggedIn: boolean indicating if the user is logged in
      *                            - username: the username of the logged-in user (null if not logged in)
+     *                            - userId: the ID of the logged-in user (null if not logged in)
      */
     async isUserLoggedIn() {
         const token = localStorage.getItem(this.#authTokenKey);
 
-        let loggedIn = false;
-        let username = null;
+        // The return object starts with default empty values
+        let returnObject = {
+            loggedIn: false,
+            username: null,
+            userId: null
+        };
 
         if (!token || token === 'undefined' || token === undefined) {
             // If the token is not present or is undefined, the user is not logged in
@@ -126,7 +131,7 @@ class BackendApi {
                 console.log('[BackendApi] Token not found or undefined in local storage');
             }
 
-            return { loggedIn, username };
+            return returnObject;
         }
 
         if (this.#debug) {
@@ -145,10 +150,11 @@ class BackendApi {
         if (response.ok) {
             const bodyJson = await response.json();
 
-            loggedIn = true;
-            username = bodyJson.username;
+            returnObject.loggedIn = true;
+            returnObject.username = bodyJson.username;
+            returnObject.userId = bodyJson.userId;
 
-            return { loggedIn, username };
+            return returnObject;
         } else {
             if (this.#debug) {
                 console.warn('[BackendApi] Auth token is invalid or expired. Removing from local storage.');
@@ -156,7 +162,7 @@ class BackendApi {
 
             localStorage.removeItem('authToken');
 
-            return { loggedIn, username };
+            return returnObject;
         }
     }
 
