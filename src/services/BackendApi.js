@@ -37,6 +37,23 @@ class BackendApi {
     }
 
     /**
+     * Retrieves the authentication token from local storage. This method is meant to be used internally, and only
+     * when the user is known to be logged in. That's why it throws an error if the token is not found.
+     * 
+     * @returns {string} The authentication token.
+     * @throws {Error} If the token is not found in local storage.
+     */
+    #getAuthToken() {
+        const token = localStorage.getItem(this.#authTokenKey);
+
+        if (!token || token === 'undefined' || token === undefined) {
+            throw new Error('[BackendApi] Auth token not found in local storage. User might not be logged in.');
+        }
+
+        return token;
+    }
+
+    /**
      * Attempts to log in a user with the provided username and password.
      * 
      * If the login is successful, the authentication token is stored in local storage.
@@ -247,6 +264,52 @@ class BackendApi {
             throw new Error(`Logout failed with status: ${response.status} (${getReasonPhrase(response.status)})`);
         }
 
+    }
+
+    /**
+     * Creates a new annotation for the specified user with the given color index and title.
+     * 
+     * @param {number} userId 
+     * @param {number} colorIndex 
+     * @param {string} title 
+     * @returns {Promise<number>} The ID of the created annotation
+     * @throws {Error} If the create annotation request fails for any reason
+     */
+    async createAnnotation(userId, colorIndex, title) {
+        const token = this.#getAuthToken();
+
+        const requestBody = JSON.stringify({ userId, colorIndex, title });
+
+        if (this.#debug) {
+            console.log('[BackendApi] Creating new annotation');
+            console.log('[BackendApi] Request URL:', `${this.#baseUrl}/annotations`);
+            console.log('[BackendApi] Request Body:', requestBody);
+        }
+
+        const response = await fetch(`${this.#baseUrl}/annotations`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: requestBody
+        });
+
+        if (response.ok) {
+            if (this.#debug) {
+                console.log('[BackendApi] Annotation created successfully');
+            }
+
+            const annotationResponse = await response.json();
+            
+            return annotationResponse.id;
+        } else {
+            if (this.#debug) {
+                console.warn('[BackendApi] Create annotation request failed');
+            }
+
+            throw new Error(`Create annotation failed with status: ${response.status} (${getReasonPhrase(response.status)})`);
+        }
     }
 }
 
