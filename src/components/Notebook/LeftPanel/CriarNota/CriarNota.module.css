@@ -1,11 +1,15 @@
+:root {
+    --size-button-caneta: 80px;
+}
+
 .canetaButton img {
-    width: 100px;
-    height: 100px;
+    width: var(--size-button-caneta);
+    height: var(--size-button-caneta);
 }
 
 .canetaButton {
-    width: 100px;
-    height: 100px;
+    width: var(--size-button-caneta);
+    height: var(--size-button-caneta);
 
     border-radius: 50%;
     background-color: white;
