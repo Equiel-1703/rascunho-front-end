@@ -1,3 +1,5 @@
+import axios from 'axios';
+import { jwtDecode } from 'jwt-decode';
 import { StatusCodes, getReasonPhrase } from 'http-status-codes';
 
 class ValidationErrors extends Error {
@@ -23,9 +25,76 @@ class BadCredentialsError extends Error {
  */
 class BackendApi {
     #baseUrl = 'https://localhost:8443/api';
-    #debug = false;
 
+    #debug = false;
     #authTokenKey = 'authToken';
+
+    #axiosApi = null;
+
+    constructor() {
+        const refreshEndpoint = '/auth/refresh';
+
+        // Initializing axios
+        this.#axiosApi = axios.create({
+            baseURL: this.#baseUrl,
+            withCredentials: true // Allow cookies to be sent in requests
+        });
+
+        this.#axiosApi.interceptors.request.use(
+            async (config) => {
+                // Ignoring refresh endpoint
+                if (config.url.endsWith(refreshEndpoint)) {
+                    return config;
+                }
+
+                const token = localStorage.getItem(this.#authTokenKey);
+
+                if (token) {
+                    const decodedToken = jwtDecode(token);
+                    const currentTime = Date.now() / 1000; // in seconds
+
+                    // If the token is expired or will expire in the next minute, refresh it
+                    if (decodedToken.exp < currentTime + 60) {
+                        if (this.#debug) {
+                            console.log('[BackendApi] Auth token is expired or about to expire. Refreshing...');
+                        }
+
+                        try {
+                            const refreshResponse = await this.#axiosApi.post(refreshEndpoint);
+                            const newToken = refreshResponse.data.token;
+
+                            // Save the new refreshed token in local storage
+                            localStorage.setItem(this.#authTokenKey, newToken);
+
+                            if (this.#debug) {
+                                console.log('[BackendApi] Auth token refreshed successfully');
+                            }
+
+                            config.headers['Authorization'] = `Bearer ${newToken}`;
+                        } catch (error) {
+                            if (this.#debug) {
+                                console.warn('[BackendApi] Failed to refresh auth token:', error);
+                            }
+
+                            // If the token refresh fails, log out the user
+                            await this.logout();
+
+                            return Promise.reject(error);
+                        }
+                    } else {
+                        config.headers['Authorization'] = `Bearer ${token}`;
+                    }
+                }
+
+                return config;
+            },
+            (error) => {
+                return Promise.reject(error);
+            }
+        );
+
+
+    }
 
     /**
      * Enables or disables debug mode.
@@ -34,23 +103,6 @@ class BackendApi {
      */
     setDebugMode(enabled) {
         this.#debug = enabled;
-    }
-
-    /**
-     * Retrieves the authentication token from local storage. This method is meant to be used internally, and only
-     * when the user is known to be logged in. That's why it throws an error if the token is not found.
-     * 
-     * @returns {string} The authentication token.
-     * @throws {Error} If the token is not found in local storage.
-     */
-    #getAuthToken() {
-        const token = localStorage.getItem(this.#authTokenKey);
-
-        if (!token || token === 'undefined' || token === undefined) {
-            throw new Error('[BackendApi] Auth token not found in local storage. User might not be logged in.');
-        }
-
-        return token;
     }
 
     /**
@@ -76,18 +128,9 @@ class BackendApi {
             console.log('[BackendApi] Attempting to login user.');
         }
 
-        const response = await fetch(`${this.#baseUrl}/auth/login`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            credentials: 'include', // Cookies will received
-            body: jsonBody
-        });
-
-        if (response.ok) {
-            const bodyJson = await response.json();
-            const token = bodyJson.token;
+        try {
+            const response = await this.#axiosApi.post('/auth/login', jsonBody);
+            const token = response.data.token;
 
             // Store the authentication token in local storage
             localStorage.setItem(this.#authTokenKey, token);
@@ -97,27 +140,36 @@ class BackendApi {
             }
 
             return;
-        }
-        // A bad request indicates validation errors
-        else if (response.status === StatusCodes.BAD_REQUEST) {
-            if (this.#debug) {
-                console.warn('[BackendApi] Validation errors occurred during login');
-            }
+        } catch (error) {
+            if (error.response) {
+                const status = error.response.status;
 
-            const bodyJson = await response.json();
-            throw new ValidationErrors('Validation errors occurred', bodyJson);
-        }
-        // An unauthorized status indicates incorrect credentials
-        else if (response.status === StatusCodes.UNAUTHORIZED) {
-            if (this.#debug) {
-                console.warn('[BackendApi] Bad credentials were provided');
-            }
+                // A bad request indicates validation errors
+                if (status === StatusCodes.BAD_REQUEST) {
+                    if (this.#debug) {
+                        console.warn('[BackendApi] Validation errors occurred during login');
+                    }
 
-            throw new BadCredentialsError('Incorrect username or password');
-        }
-        // Other errors
-        else {
-            throw new Error(`Login failed with status: ${response.status} (${getReasonPhrase(response.status)})`);
+                    throw new ValidationErrors('Validation errors occurred', error.response.data);
+                }
+
+                // An unauthorized status indicates incorrect credentials
+                else if (status === StatusCodes.UNAUTHORIZED) {
+                    if (this.#debug) {
+                        console.warn('[BackendApi] Bad credentials were provided');
+                    }
+
+                    throw new BadCredentialsError('Incorrect username or password');
+                }
+
+                // Other errors
+                else {
+                    throw new Error(`Login failed with status: ${error.response.status} (${getReasonPhrase(error.response.status)})`);
+                }
+            } else {
+                // Network or other errors
+                throw new Error(`Login failed: ${error.message}`);
+            }
         }
     }
 
@@ -129,16 +181,17 @@ class BackendApi {
      *                            - loggedIn: boolean indicating if the user is logged in
      *                            - username: the username of the logged-in user (null if not logged in)
      *                            - userId: the ID of the logged-in user (null if not logged in)
+     * @throws {Error} If the token validation request fails for any unknown reason.
      */
     async isUserLoggedIn() {
-        const token = localStorage.getItem(this.#authTokenKey);
-
         // The return object starts with default empty values
         let returnObject = {
             loggedIn: false,
             username: null,
             userId: null
         };
+
+        const token = localStorage.getItem(this.#authTokenKey);
 
         if (!token || token === 'undefined' || token === undefined) {
             // If the token is not present or is undefined, the user is not logged in
@@ -153,77 +206,32 @@ class BackendApi {
             console.log(`[BackendApi] Validating auth token in backend: ${this.#baseUrl}/auth/me`);
         }
 
-        const response = await fetch(`${this.#baseUrl}/auth/me`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            },
-            body: null
-        });
-
-        if (response.ok) {
-            const bodyJson = await response.json();
+        try {
+            const response = await this.#axiosApi.post('/auth/me');
 
             returnObject.loggedIn = true;
-            returnObject.username = bodyJson.username;
-            returnObject.userId = bodyJson.userId;
+            returnObject.username = response.data.username;
+            returnObject.userId = response.data.userId;
+
+            if (this.#debug) {
+                console.log('[BackendApi] Auth token is valid. User is logged in.');
+            }
 
             return returnObject;
-        } else {
-            if (this.#debug) {
-                console.warn('[BackendApi] Auth token is invalid or expired. Removing from local storage.');
+        } catch (error) {
+            if (error.response) {
+                if (this.#debug) {
+                    console.warn('[BackendApi] Auth token is invalid or expired. Removing from local storage.');
+                }
+
+                localStorage.removeItem('authToken');
+
+                return returnObject;
+            } else {
+                // Network or other errors
+                throw new Error(`Token validation failed: ${error.message}`);
             }
-
-            localStorage.removeItem('authToken');
-
-            return returnObject;
         }
-    }
-
-    /**
-     * Attempts to refresh the authentication token using the refresh http-only cookie.
-     * 
-     * @returns {Promise<void>} A promise that resolves if the token is refreshed successfully.
-     * @throws {BadCredentialsError} If the refresh token cookie is invalid or expired.
-     * @throws {Error} If the token refresh fails for other reasons.
-     */
-    async refreshAuthToken() {
-        if (this.#debug) {
-            console.log(`[BackendApi] Attempting to refresh auth token using refresh cookie: ${this.#baseUrl}/auth/refresh`);
-        }
-
-        const response = await fetch(`${this.#baseUrl}/auth/refresh`, {
-            method: 'POST',
-            credentials: 'include', // Include cookies in the request
-            body: null
-        });
-
-        if (response.ok) {
-            const bodyJson = await response.json();
-            const newToken = bodyJson.token;
-
-            // Store the new token in local storage
-            localStorage.setItem(this.#authTokenKey, newToken);
-
-            if (this.#debug) {
-                console.log('[BackendApi] Token refreshed successfully!');
-            }
-
-            return;
-        } else if (response.status === StatusCodes.UNAUTHORIZED) {
-            if (this.#debug) {
-                console.warn('[BackendApi] Refresh cookie is invalid or expired');
-            }
-
-            // If the refresh cookie is invalid or expired, it makes sense to also remove the auth token
-            // (if it exists) and throw an error
-            localStorage.removeItem(this.#authTokenKey);
-
-            throw new BadCredentialsError('Refresh cookie is invalid or expired');
-        } else {
-            throw new Error(`Auth token refresh failed with status: ${response.status} (${getReasonPhrase(response.status)})`);
-        }
-
     }
 
     /**
@@ -239,26 +247,26 @@ class BackendApi {
             console.log(`[BackendApi] Logging out user: ${this.#baseUrl}/auth/logout`);
         }
 
-        const response = await fetch(`${this.#baseUrl}/auth/logout`, {
-            method: 'POST',
-            credentials: 'include', // Include cookies in the request
-            body: null
-        });
+        try {
+            await this.#axiosApi.post('/auth/logout');
 
-        if (response.ok) {
             if (this.#debug) {
                 console.log('[BackendApi] User logged out successfully');
             }
 
             return;
-        } else {
-            if (this.#debug) {
-                console.warn('[BackendApi] Logout request failed');
+        } catch (error) {
+            if (error.response) {
+                if (this.#debug) {
+                    console.warn('[BackendApi] Logout request failed');
+                }
+
+                throw new Error(`Logout failed with status: ${error.response.status} (${getReasonPhrase(error.response.status)})`);
+            } else {
+                // Network or other errors
+                throw new Error(`Logout failed: ${error.message}`);
             }
-
-            throw new Error(`Logout failed with status: ${response.status} (${getReasonPhrase(response.status)})`);
         }
-
     }
 
     /**
@@ -271,32 +279,21 @@ class BackendApi {
      * @throws {Error} If the create annotation request fails for any reason
      */
     async createAnnotation(userId, colorIndex, title) {
-        const token = this.#getAuthToken();
-
         const requestBody = JSON.stringify({ userId, colorIndex, title });
 
         if (this.#debug) {
             console.log('[BackendApi] Creating new annotation.');
         }
 
-        const response = await fetch(`${this.#baseUrl}/annotations`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: requestBody
-        });
+        try {
+            const response = await this.#axiosApi.post('/annotations', requestBody);
 
-        if (response.ok) {
             if (this.#debug) {
                 console.log('[BackendApi] Annotation created successfully');
             }
 
-            const annotationResponse = await response.json();
-
-            return annotationResponse.id;
-        } else {
+            return response.data.id;
+        } catch (error) {
             if (this.#debug) {
                 console.warn('[BackendApi] Create annotation request failed');
             }
@@ -313,30 +310,19 @@ class BackendApi {
      * @throws {Error} If the fetch annotations request fails for any reason
      */
     async getAllAnnotationsForUser(userId) {
-        const token = this.#getAuthToken();
-
         if (this.#debug) {
             console.log('[BackendApi] Fetching all annotations for user.');
         }
 
-        const response = await fetch(`${this.#baseUrl}/annotations?userId=${userId}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: null
-        });
+        try {
+            const response = await this.#axiosApi.get(`/annotations?userId=${userId}`);
 
-        if (response.ok) {
             if (this.#debug) {
                 console.log('[BackendApi] Annotations fetched successfully');
             }
 
-            const annotations = await response.json();
-
-            return annotations.annotations;
-        } else {
+            return response.data.annotations;
+        } catch (error) {
             if (this.#debug) {
                 console.warn('[BackendApi] Fetch annotations request failed');
             }
@@ -361,30 +347,19 @@ class BackendApi {
      * @throws {Error} If the fetch annotation data request fails for any reason.
      */
     async getAnnotationData(annotationId, includeTags = false) {
-        const token = this.#getAuthToken();
-
         if (this.#debug) {
             console.log('[BackendApi] Fetching data for annotation id:', annotationId);
         }
 
-        const response = await fetch(`${this.#baseUrl}/annotations/${annotationId}?tags=${includeTags}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: null
-        });
+        try {
+            const response = await this.#axiosApi.get(`/annotations/${annotationId}?tags=${includeTags}`);
 
-        if (response.ok) {
             if (this.#debug) {
                 console.log('[BackendApi] Annotation data fetched successfully');
             }
 
-            const annotationData = await response.json();
-
-            return annotationData;
-        } else {
+            return response.data;
+        } catch (error) {
             if (this.#debug) {
                 console.warn('[BackendApi] Fetch annotation data request failed');
             }
