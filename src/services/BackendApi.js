@@ -344,6 +344,54 @@ class BackendApi {
             throw new Error(`Fetch annotations failed with status: ${response.status} (${getReasonPhrase(response.status)})`);
         }
     }
+
+    /**
+     * Retrieves the data for a specific annotation by its ID.
+     *
+     * @param {number} annotationId - The ID of the annotation to retrieve.
+     * @param {boolean} includeTags - Whether to include annotation tags in the response. Default is false.
+     * @returns {Promise<Object>} A promise that resolves to the annotation data object. 
+     * This object contains:
+     *     - id: The ID of the annotation.
+     *     - title: The title of the annotation.
+     *     - text: The text content of the annotation.
+     *     - colorIndex: The color index of the annotation.
+     *     - tags: An array of tags associated with the annotation (if includeTags is true). If
+     *       includeTags is false, this property will be an empty array.
+     * @throws {Error} If the fetch annotation data request fails for any reason.
+     */
+    async getAnnotationData(annotationId, includeTags = false) {
+        const token = this.#getAuthToken();
+
+        if (this.#debug) {
+            console.log('[BackendApi] Fetching data for annotation id:', annotationId);
+        }
+
+        const response = await fetch(`${this.#baseUrl}/annotations/${annotationId}?tags=${includeTags}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: null
+        });
+
+        if (response.ok) {
+            if (this.#debug) {
+                console.log('[BackendApi] Annotation data fetched successfully');
+            }
+
+            const annotationData = await response.json();
+
+            return annotationData;
+        } else {
+            if (this.#debug) {
+                console.warn('[BackendApi] Fetch annotation data request failed');
+            }
+
+            throw new Error(`Fetch annotation data failed with status: ${response.status} (${getReasonPhrase(response.status)})`);
+        }
+    }
 }
 
 export { ValidationErrors, BadCredentialsError };
