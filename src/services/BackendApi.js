@@ -189,8 +189,7 @@ class BackendApi {
      */
     async refreshAuthToken() {
         if (this.#debug) {
-            console.log('[BackendApi] Attempting to refresh auth token using refresh cookie');
-            console.log('[BackendApi] URL:', `${this.#baseUrl}/auth/refresh`);
+            console.log(`[BackendApi] Attempting to refresh auth token using refresh cookie: ${this.#baseUrl}/auth/refresh`);
         }
 
         const response = await fetch(`${this.#baseUrl}/auth/refresh`, {
@@ -237,7 +236,7 @@ class BackendApi {
         localStorage.removeItem(this.#authTokenKey);
 
         if (this.#debug) {
-            console.log('[BackendApi] Logging out user: ', `${this.#baseUrl}/auth/logout`);
+            console.log(`[BackendApi] Logging out user: ${this.#baseUrl}/auth/logout`);
         }
 
         const response = await fetch(`${this.#baseUrl}/auth/logout`, {
