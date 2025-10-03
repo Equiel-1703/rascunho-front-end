@@ -12,9 +12,12 @@ const notesColors = [
     '#F6DC43'
 ];
 
+function getRandomColorIndex() {
+    return Math.floor(Math.random() * notesColors.length);
+}
 
-function Nota({ title }) {
-    const randomIndex = Math.floor(Math.random() * notesColors.length);
+function Nota({ noteId, title, colorIndex, onClickCallback }) {
+    const randomIndex = colorIndex;
 
     return (
         <div
@@ -24,6 +27,7 @@ function Nota({ title }) {
                     backgroundColor: notesColors[randomIndex]
                 }
             }
+            onClick={() => onClickCallback(noteId)}
         >
             <p>{title}</p>
         </div>
@@ -31,3 +35,4 @@ function Nota({ title }) {
 }
 
 export default Nota;
+export { getRandomColorIndex };

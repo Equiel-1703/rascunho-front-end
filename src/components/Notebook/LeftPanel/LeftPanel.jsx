@@ -1,12 +1,41 @@
 import styles from './LeftPanel.module.css';
 
-import { useState } from 'react';
+import { useState, useEffect, use } from 'react';
+
+import BackendApi from '../../../services/BackendApi.js';
+import { useAuthContext } from '../../AuthContext/AuthContext.jsx';
+import { useNotebookContext } from '../NotebookContext.jsx';
 
 import Nota from './Nota/Nota.jsx';
 import CriarNota from './CriarNota/CriarNota.jsx';
 
 function LeftPanel() {
     const [selectedTab, setSelectedTab] = useState('notas');
+    const [notes, setNotes] = useState(null);
+
+    const authContext = useAuthContext();
+    const userId = authContext.loggedUserId;
+
+    const notebookContext = useNotebookContext();
+
+    const loadNotes = async () => {
+        try {
+            const loadedNotes = await BackendApi.getAllAnnotationsForUser(userId);
+            setNotes(loadedNotes);
+        } catch (error) {
+            console.error("[LeftPanel] An error occurred while loading notes: ", error);
+        }
+    }
+
+    const clickNote = (noteId) => {
+        notebookContext.setActiveNoteId(noteId);
+    }
+
+    // This will be called only once, when the component is mounted
+    // or when the userId changes (i.e., when a different user logs in)
+    useEffect(() => {
+        loadNotes();
+    }, [userId]);
 
     return (
         <>
@@ -28,8 +57,18 @@ function LeftPanel() {
                 {
                     selectedTab === 'notas' && (
                         <>
-                            <Nota title={"um titulo enorme para testar o text-wrap"} />
-                            <CriarNota />
+                            {
+                                notes && notes.map((note) => (
+                                    <Nota
+                                        key={note.id}
+                                        noteId={note.id}
+                                        title={note.title}
+                                        colorIndex={note.colorIndex}
+                                        onClickCallback={clickNote}
+                                    />
+                                ))
+                            }
+                            <CriarNota callback={loadNotes} />
                         </>
                     )
                 }

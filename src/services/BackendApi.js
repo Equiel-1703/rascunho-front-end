@@ -74,8 +74,6 @@ class BackendApi {
 
         if (this.#debug) {
             console.log('[BackendApi] Attempting to login user.');
-            console.log('[BackendApi] Request URL:', `${this.#baseUrl}/auth/login`);
-            console.log('[BackendApi] Request Body:', jsonBody);
         }
 
         const response = await fetch(`${this.#baseUrl}/auth/login`, {
@@ -152,8 +150,7 @@ class BackendApi {
         }
 
         if (this.#debug) {
-            console.log('[BackendApi] Validating auth token in backend');
-            console.log('[BackendApi] Request URL:', `${this.#baseUrl}/auth/me`);
+            console.log(`[BackendApi] Validating auth token in backend: ${this.#baseUrl}/auth/me`);
         }
 
         const response = await fetch(`${this.#baseUrl}/auth/me`, {
@@ -193,7 +190,7 @@ class BackendApi {
     async refreshAuthToken() {
         if (this.#debug) {
             console.log('[BackendApi] Attempting to refresh auth token using refresh cookie');
-            console.log('[BackendApi] Request URL:', `${this.#baseUrl}/auth/refresh`);
+            console.log('[BackendApi] URL:', `${this.#baseUrl}/auth/refresh`);
         }
 
         const response = await fetch(`${this.#baseUrl}/auth/refresh`, {
@@ -240,8 +237,7 @@ class BackendApi {
         localStorage.removeItem(this.#authTokenKey);
 
         if (this.#debug) {
-            console.log('[BackendApi] Logging out user');
-            console.log('[BackendApi] Request URL:', `${this.#baseUrl}/auth/logout`);
+            console.log('[BackendApi] Logging out user: ', `${this.#baseUrl}/auth/logout`);
         }
 
         const response = await fetch(`${this.#baseUrl}/auth/logout`, {
@@ -281,9 +277,7 @@ class BackendApi {
         const requestBody = JSON.stringify({ userId, colorIndex, title });
 
         if (this.#debug) {
-            console.log('[BackendApi] Creating new annotation');
-            console.log('[BackendApi] Request URL:', `${this.#baseUrl}/annotations`);
-            console.log('[BackendApi] Request Body:', requestBody);
+            console.log('[BackendApi] Creating new annotation.');
         }
 
         const response = await fetch(`${this.#baseUrl}/annotations`, {
@@ -301,7 +295,7 @@ class BackendApi {
             }
 
             const annotationResponse = await response.json();
-            
+
             return annotationResponse.id;
         } else {
             if (this.#debug) {
@@ -309,6 +303,46 @@ class BackendApi {
             }
 
             throw new Error(`Create annotation failed with status: ${response.status} (${getReasonPhrase(response.status)})`);
+        }
+    }
+
+    /**
+     * Retrieves all annotations for the specified user.
+     * 
+     * @param {number} userId 
+     * @returns {Promise<Array>} An array of annotations. Each annotation is an object with properties: id, colorIndex, title
+     * @throws {Error} If the fetch annotations request fails for any reason
+     */
+    async getAllAnnotationsForUser(userId) {
+        const token = this.#getAuthToken();
+
+        if (this.#debug) {
+            console.log('[BackendApi] Fetching all annotations for user.');
+        }
+
+        const response = await fetch(`${this.#baseUrl}/annotations?userId=${userId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: null
+        });
+
+        if (response.ok) {
+            if (this.#debug) {
+                console.log('[BackendApi] Annotations fetched successfully');
+            }
+
+            const annotations = await response.json();
+
+            return annotations.annotations;
+        } else {
+            if (this.#debug) {
+                console.warn('[BackendApi] Fetch annotations request failed');
+            }
+
+            throw new Error(`Fetch annotations failed with status: ${response.status} (${getReasonPhrase(response.status)})`);
         }
     }
 }

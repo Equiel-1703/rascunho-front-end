@@ -12,6 +12,7 @@
 
     padding: 0;
     margin: 0;
+    margin-top: 1rem;
     cursor: pointer;
     border: none;
 
@@ -35,4 +36,17 @@
 .canetaButton:active {
     transform: scale(0.9);
     transition: transform 0.1s;
+}
+
+.canetaLoading {
+    animation: loading 1s linear infinite;
+}
+
+@keyframes loading {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
