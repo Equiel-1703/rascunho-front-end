@@ -1,0 +1,43 @@
+.note {
+    font-family: var(--font-notebook);
+    font-size: var(--font-body-size);
+    font-weight: bold;
+
+    width: 100%;
+    padding: 1.5rem;
+    margin: 1rem 0;
+
+    cursor: pointer;
+
+    border-radius: 20px;
+
+    box-sizing: border-box;
+
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+
+    transform: scale(1);
+    transition:
+        transform 0.2s,
+        box-shadow 0.2s;
+}
+
+.note:hover {
+    box-shadow: 0 4px 8px rgba(41, 0, 94, 0.14);
+
+    transform: scale(1.05);
+    transition:
+        transform 0.2s,
+        box-shadow 0.2s;
+}
+
+.note p {
+    text-align: left;
+
+    margin: 0;
+
+    min-width: 0;
+
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    hyphens: auto;
+}

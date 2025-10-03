@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Homemade+Apple&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fuzzy+Bubbles:wght@400;700&display=swap');
 
 :root {
     --color-bg: rgb(255, 234, 216);
@@ -10,6 +11,11 @@
     --font-body-size: 14pt;
     
     --font-username: 'Homemade Apple', cursive;
+    --font-notebook: 'Fuzzy Bubbles', sans-serif;
+
+    --panels-padding: 2rem;
+
+    --panel-left-bg: #FFC29B;
 }
 
 body {

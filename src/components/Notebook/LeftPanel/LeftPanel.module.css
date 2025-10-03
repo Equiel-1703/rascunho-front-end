@@ -1,0 +1,66 @@
+:root {
+    --default-tab-color: var(--panel-left-bg);
+    --select-tab-color: #FA812F;;
+    --click-tab-color: #DD0303;
+}
+
+.tabs {
+    list-style-type: none;
+
+    margin: 0;
+    padding: 0;
+
+    display: flex;
+    flex-direction: row;
+
+    align-items: center;
+    justify-content: space-around;
+
+    font-family: var(--font-notebook);
+    font-size: var(--font-body-size);
+}
+
+.tab {
+    width: 100%;
+    height: 100%;
+
+    padding: 0.5rem 0;
+
+    border-radius: 50px 50px 0 0;
+
+    user-select: none;
+    cursor: pointer;
+
+    box-sizing: border-box;
+}
+
+.tab:hover {
+    background-color: var(--select-tab-color);
+}
+
+.tab:active {
+    background-color: var(--click-tab-color);
+}
+
+.activeTab {
+    background-color: var(--default-tab-color);
+}
+
+.inactiveTab {
+    background-color: var(--default-tab-color);
+    box-shadow: inset 0 -4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.tabContent {
+    background-color: var(--panel-left-bg);
+
+    height: 100%;
+    width: 100%;
+
+    border-radius: 0 0 50px 50px;
+
+    padding: 0;
+    margin: 0;
+
+    box-sizing: border-box;
+}
