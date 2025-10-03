@@ -17,16 +17,10 @@ function getRandomColorIndex() {
 }
 
 function Nota({ noteId, title, colorIndex, onClickCallback }) {
-    const randomIndex = colorIndex;
-
     return (
         <div
             className={styles.note}
-            style={
-                {
-                    backgroundColor: notesColors[randomIndex]
-                }
-            }
+            style={{ backgroundColor: notesColors[colorIndex] }}
             onClick={() => onClickCallback(noteId)}
         >
             <p>{title}</p>

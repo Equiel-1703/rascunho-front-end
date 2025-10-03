@@ -1,6 +1,6 @@
 import styles from './LeftPanel.module.css';
 
-import { useState, useEffect, use } from 'react';
+import { useState, useEffect } from 'react';
 
 import BackendApi from '../../../services/BackendApi.js';
 import { useAuthContext } from '../../AuthContext/AuthContext.jsx';
