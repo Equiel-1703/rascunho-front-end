@@ -1,0 +1,71 @@
+@keyframes saveAppear {
+    0% {
+        opacity: 0;
+        width: 0;
+        transform: translateX(20px);
+    }
+
+    100% {
+        opacity: 1;
+        width: 60px;
+        transform: translateX(0);
+    }
+}
+
+@keyframes saving {
+    0% {
+        transform: rotate(0);
+        filter: blur(0px);
+    }
+
+    50% {
+        filter: blur(1px);
+    }
+
+    100% {
+        filter: blur(0px);
+        transform: rotate(360deg);
+    }
+}
+
+.saveButton {
+    margin-right: 1rem;
+    padding: 0;
+
+    background-color: transparent;
+    border: none;
+    outline: none;
+
+    animation: saveAppear 0.3s ease-out;
+
+    transition: transform 0.2s ease-in-out;
+    transform: scale(1);
+}
+
+.saveButton img {
+    width: 60px;
+    height: 60px;
+}
+
+.saveButton:hover {
+    transform: scale(1.2);
+    filter: drop-shadow(3px 3px 3px rgba(108, 0, 231, 0.2));
+}
+
+.saveButton:active {
+    transform: scale(0.9);
+    filter: drop-shadow(0px 0px 0px rgba(108, 0, 231, 0));
+}
+
+.saving {
+    animation: saving 1s infinite;
+}
+
+.disappear {
+    animation: saveAppear 0.3s ease-out reverse;
+}
+
+.disabled {
+    pointer-events: none;
+    display: none;
+}

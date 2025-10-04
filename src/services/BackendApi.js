@@ -401,6 +401,45 @@ class BackendApi {
             throw new Error(`Fetch annotation data failed with status: ${response.status} (${getReasonPhrase(response.status)})`);
         }
     }
+
+    /**
+     * Updates the annotation with the specified ID, setting its title, text, and color index.
+     * 
+     * @param {number} annotationId - The ID of the annotation to update
+     * @param {string} title - The new title for the annotation
+     * @param {string} text - The new text content for the annotation
+     * @param {number} colorIndex - The new color index for the annotation
+     * @returns {Promise<void>} A promise that resolves if the update is successful
+     * @throws {Error} If the update annotation request fails for any reason
+     */
+    async updateAnnotation(annotationId, title, text, colorIndex = null) {
+        let saveObject = { title, text };
+
+        if (colorIndex !== null) {
+            saveObject.colorIndex = colorIndex;
+        }
+
+        if (this.#debug) {
+            console.log('[BackendApi] Updating annotation with id: ', annotationId);
+            console.log('[BackendApi] Update data: ', saveObject);
+        }
+
+        try {
+            await this.#axiosApi.post(`/annotations/${annotationId}`, saveObject);
+
+            if (this.#debug) {
+                console.log('[BackendApi] Annotation updated successfully');
+            }
+
+            return;
+        } catch (error) {
+            if (this.#debug) {
+                console.warn('[BackendApi] Update annotation request failed');
+            }
+
+            throw new Error(`Update annotation failed with status: ${response.status} (${getReasonPhrase(response.status)})`);
+        }
+    }
 }
 
 export { ValidationErrors, BadCredentialsError };

@@ -17,7 +17,9 @@ function LeftPanel() {
     const userId = authContext.loggedUserId;
 
     const notebookContext = useNotebookContext();
+    const saveTrigger = notebookContext.saveTrigger;
 
+    // This will load all notes for the current user
     const loadNotes = async () => {
         try {
             const loadedNotes = await BackendApi.getAllAnnotationsForUser(userId);
@@ -27,15 +29,15 @@ function LeftPanel() {
         }
     }
 
+    // This will be called when a note is clicked
     const clickNote = (noteId) => {
         notebookContext.setActiveNoteId(noteId);
     }
 
-    // This will be called only once, when the component is mounted
-    // or when the userId changes (i.e., when a different user logs in)
+    // When a new user logs in, or when a save is triggered, reload notes
     useEffect(() => {
         loadNotes();
-    }, [userId]);
+    }, [userId, saveTrigger]);
 
     return (
         <>
