@@ -122,14 +122,12 @@ class BackendApi {
      * @throws {Error} If the login fails for other reasons.
      */
     async attemptLogin(username, password) {
-        const jsonBody = JSON.stringify({ username, password });
-
         if (this.#debug) {
             console.log('[BackendApi] Attempting to login user.');
         }
 
         try {
-            const response = await this.#axiosApi.post('/auth/login', jsonBody);
+            const response = await this.#axiosApi.post('/auth/login', { username, password });
             const token = response.data.token;
 
             // Store the authentication token in local storage
@@ -170,6 +168,44 @@ class BackendApi {
                 // Network or other errors
                 throw new Error(`Login failed: ${error.message}`);
             }
+        }
+    }
+
+    /**
+     * Retrieves the username and userId from the stored JWT token in local storage.
+     * 
+     * @returns {Object} An object containing:
+     *                   - username: the username extracted from the token
+     *                   - userId: the userId extracted from the token
+     * If the token is not present or invalid, both properties will be null.
+     * 
+     * @throws {Error} If the token is malformed or cannot be decoded.
+     */
+    getUserInfoFromToken() {
+        const token = localStorage.getItem(this.#authTokenKey);
+        let returnObject = {
+            username: null,
+            userId: null
+        };
+
+        if (!token || token === 'undefined' || token === undefined) {
+            // If the token is not present or is undefined, return null values
+            if (this.#debug) {
+                console.log('[BackendApi] Token not found or undefined in local storage');
+            }
+
+            return returnObject;
+        }
+
+        try {
+            const decodedToken = jwtDecode(token);
+
+            returnObject.username = decodedToken.sub;
+            returnObject.userId = decodedToken.userId;
+
+            return returnObject;
+        } catch (error) {
+            throw new Error('Failed to decode token: ' + error.message);
         }
     }
 
@@ -279,14 +315,12 @@ class BackendApi {
      * @throws {Error} If the create annotation request fails for any reason
      */
     async createAnnotation(userId, colorIndex, title) {
-        const requestBody = JSON.stringify({ userId, colorIndex, title });
-
         if (this.#debug) {
             console.log('[BackendApi] Creating new annotation.');
         }
 
         try {
-            const response = await this.#axiosApi.post('/annotations', requestBody);
+            const response = await this.#axiosApi.post('/annotations', { userId, colorIndex, title });
 
             if (this.#debug) {
                 console.log('[BackendApi] Annotation created successfully');

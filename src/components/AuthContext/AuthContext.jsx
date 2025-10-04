@@ -63,8 +63,12 @@ function AuthContext({ children }) {
     const login = async (p_username, p_password) => {
         await BackendApi.attemptLogin(p_username, p_password);
 
-        // If successfull update the logged username
-        setLoggedUsername(p_username);
+        const userInfoFromToken = BackendApi.getUserInfoFromToken();
+
+        // If successfull update the logged username and userId using the authToken retrieved
+        // from login
+        setLoggedUsername(userInfoFromToken.username);
+        setLoggedUserId(userInfoFromToken.userId);
     };
 
     const logout = async () => {
