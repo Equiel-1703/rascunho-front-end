@@ -32,13 +32,20 @@
 }
 
 .note p {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+
+    overflow: hidden;
+
     text-align: left;
 
     margin: 0;
 
     min-width: 0;
 
-    overflow-wrap: break-word;
     word-wrap: break-word;
     hyphens: auto;
 }
