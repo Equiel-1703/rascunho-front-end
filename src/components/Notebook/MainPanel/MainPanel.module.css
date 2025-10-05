@@ -3,11 +3,20 @@
 }
 
 .noNoteSelected {
+    margin: auto 0;
+    padding: 0;
+
     font-size: var(--font-secondary-title-size);
     font-style: italic;
 }
 
 .noteTitle {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+
     width: 100%;
 
     font-size: var(--font-secondary-title-size);
@@ -15,10 +24,18 @@
     margin: 1rem 0;
 
     padding: 0;
-    outline: none;
-    border: none;
+
     background-color: transparent;
+    border: none;
+    outline: none;
+    resize: none;
+
     text-align: center;
+
+    word-wrap: break-word;
+    hyphens: auto;
+
+    overflow: hidden;
 }
 
 .noteTextArea {
@@ -37,10 +54,8 @@
     outline: none;
     resize: none;
 
-    overflow-wrap: break-word;
     word-wrap: break-word;
     hyphens: auto;
-    white-space: pre-wrap;
 
     text-align: justify;
 

@@ -2,8 +2,9 @@ import styles from './MainPanel.module.css';
 
 import { useEffect, useState } from 'react';
 
-import BackendApi from '../../../services/BackendApi';
-import { useNotebookContext } from '../NotebookContext';
+import BackendApi from '../../../services/BackendApi.js';
+import SmartTextArea from '../../SmartTextArea/SmartTextArea.jsx';
+import { useNotebookContext } from '../NotebookContext.jsx';
 
 function MainPanel() {
     const notebookContext = useNotebookContext();
@@ -37,13 +38,14 @@ function MainPanel() {
 
     return (
         <>
-            <input
-                type='text'
+            <SmartTextArea
                 className={`${styles.note} ${styles.noteTitle}`}
-                value={notebookContext.currentNoteTitle}
+                initialText={(notebookContext.currentNoteTitle === null) ? '' : notebookContext.currentNoteTitle}
+                maxLength={50}
+                initialRows={1}
+                maxRows={2}
                 onChange={(e) => notebookContext.setCurrentNoteTitle(e.target.value)}
-            >
-            </input>
+            />
 
             <textarea
                 className={`${styles.note} ${styles.noteTextArea}`}
