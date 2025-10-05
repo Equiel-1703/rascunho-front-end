@@ -30,7 +30,7 @@ function ActionsPanel() {
 
     return (
         <>
-            <SaveButton saveFunction={saveButtonClick} enabled={true} />
+            <SaveButton saveFunction={saveButtonClick} enabled={canSave} />
         </>
     );
 }
