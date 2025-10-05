@@ -1,17 +1,3 @@
-@keyframes saveAppear {
-    0% {
-        opacity: 0;
-        width: 0;
-        transform: translateX(20px);
-    }
-
-    100% {
-        opacity: 1;
-        width: 60px;
-        transform: translateX(0);
-    }
-}
-
 @keyframes saving {
     0% {
         transform: rotate(0);
@@ -29,7 +15,7 @@
 }
 
 .saveButton {
-    margin-right: 1rem;
+    margin: 0;
     padding: 0;
 
     background-color: transparent;
@@ -61,11 +47,7 @@
     animation: saving 1s infinite;
 }
 
-.disappear {
-    animation: saveAppear 0.3s ease-out reverse;
-}
-
 .disabled {
     pointer-events: none;
-    display: none;
+    filter: contrast(50%);
 }
