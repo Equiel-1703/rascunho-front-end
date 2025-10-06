@@ -440,6 +440,35 @@ class BackendApi {
             throw new Error(`Update annotation failed with status: ${response.status} (${getReasonPhrase(response.status)})`);
         }
     }
+
+    /**
+     * Deletes the annotation with the specified ID.
+     * 
+     * @param {number} annotationId - The ID of the annotation to delete
+     * @returns {Promise<void>} A promise that resolves if the deletion is successful
+     * @throws {Error} If the delete annotation request fails for any reason
+     */
+    async deleteAnnotation(annotationId) {
+        if (this.#debug) {
+            console.log('[BackendApi] Deleting annotation with id: ', annotationId);
+        }
+
+        try {
+            await this.#axiosApi.delete(`/annotations/${annotationId}`);
+
+            if (this.#debug) {
+                console.log('[BackendApi] Annotation deleted successfully');
+            }
+
+            return;
+        } catch (error) {
+            if (this.#debug) {
+                console.warn('[BackendApi] Delete annotation request failed');
+            }
+
+            throw new Error(`Delete annotation failed with status: ${response.status} (${getReasonPhrase(response.status)})`);
+        }
+    }
 }
 
 export { ValidationErrors, BadCredentialsError };
