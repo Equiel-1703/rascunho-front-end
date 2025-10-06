@@ -16,7 +16,7 @@ function getRandomColorIndex() {
     return Math.floor(Math.random() * notesColors.length);
 }
 
-function Nota({ noteId, title, colorIndex, onClickCallback }) {
+function Nota({ noteId, title, colorIndex, onClickCallback, onDeleteCallback }) {
     return (
         <div
             className={styles.note}
@@ -24,6 +24,17 @@ function Nota({ noteId, title, colorIndex, onClickCallback }) {
             onClick={() => onClickCallback(noteId)}
         >
             <p>{title}</p>
+            <button
+                className={styles.deleteButton}
+                onClick={(e) => {
+                    e.stopPropagation(); // Prevent triggering the onClick of the parent div
+                    onDeleteCallback(noteId);
+                }}
+                aria-label="Deletar nota"
+                title="Deletar nota"
+            >
+                X
+            </button>
         </div>
     );
 }
