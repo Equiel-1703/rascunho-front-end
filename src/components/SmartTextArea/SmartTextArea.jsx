@@ -36,11 +36,11 @@ function SmartTextArea(
 
         if (textAreaElement) {
             const lineHeight = parseFloat(getComputedStyle(textAreaElement).lineHeight);
-            const maxHeight = lineHeight * maxRows;
+            const maxHeight = lineHeight * maxRows + 5; // Adding a small buffer to compensate for padding and margins
 
             // Reset height to auto to correctly calculate the scrollHeight
             textAreaElement.style.height = 'auto';
-            const scrollHeight = textAreaElement.scrollHeight;
+            const scrollHeight = parseFloat(textAreaElement.scrollHeight);
 
             if (scrollHeight > maxHeight) {
                 // If the content exceeds max height, set to max height and enable scrolling
