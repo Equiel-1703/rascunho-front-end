@@ -59,8 +59,11 @@
 
     border-radius: 0 0 50px 50px;
 
-    padding: 0;
+    padding: 0 0.7rem;
     margin: 0;
 
     box-sizing: border-box;
+
+    overflow-y: auto;
+    overflow-x: clip;
 }
