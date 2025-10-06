@@ -2,17 +2,16 @@ import { useEffect, useState, useRef } from 'react';
 
 function SmartTextArea(
     {
-        initialText = '',
+        text = '',
         placeholder = '',
         maxLength = 1000,
         initialRows = 3,
         maxRows = 10,
         onChange = null,
-        className = '' 
+        className = ''
     }
 ) {
     const textAreaRef = useRef(null);
-    const [text, setText] = useState(initialText);
     const [windowDimensions, setWindowDimensions] = useState({
         width: window.innerWidth,
         height: window.innerHeight
@@ -56,7 +55,6 @@ function SmartTextArea(
     }, [text, windowDimensions]);
 
     const onChangeCallback = (e) => {
-        setText(e.target.value);
         if (onChange) {
             onChange(e);
         }

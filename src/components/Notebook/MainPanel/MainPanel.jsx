@@ -40,7 +40,7 @@ function MainPanel() {
         <>
             <SmartTextArea
                 className={`${styles.note} ${styles.noteTitle}`}
-                initialText={(notebookContext.currentNoteTitle === null) ? '' : notebookContext.currentNoteTitle}
+                text={notebookContext.currentNoteTitle}
                 maxLength={50}
                 initialRows={1}
                 maxRows={2}
