@@ -34,6 +34,18 @@ function LeftPanel() {
         notebookContext.setActiveNoteId(noteId);
     }
 
+    const deleteNote = async (noteId) => {
+        try {
+            await BackendApi.deleteAnnotation(noteId);
+
+            // After deleting, reload notes on the left panel and set active note to null
+            notebookContext.setActiveNoteId(null);
+            loadNotes();
+        } catch (error) {
+            console.error("[LeftPanel] An error occurred while deleting note: ", error);
+        }
+    }
+
     // When a new user logs in, or when a save is triggered, reload notes
     useEffect(() => {
         loadNotes();
@@ -67,6 +79,7 @@ function LeftPanel() {
                                         title={note.title}
                                         colorIndex={note.colorIndex}
                                         onClickCallback={clickNote}
+                                        onDeleteCallback={deleteNote}
                                     />
                                 ))
                             }
