@@ -34,6 +34,7 @@ function CriarNota({ callback }) {
         <button
             className={styles.canetaButton + (loading ? ` ${styles.canetaLoading}` : '')}
             title="Criar nota"
+            aria-label="Criar nota"
             onClick={criarNotaClick}
         >
             <img src="/caneta-bic.png" alt="caneta" />

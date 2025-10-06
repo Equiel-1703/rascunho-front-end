@@ -21,6 +21,8 @@ function SaveButton({ saveFunction, enabled }) {
 
                 await saveFunction();
             }}
+            aria-label='Salvar nota'
+            title='Salvar nota'
         >
             <img src="/disquete.png" alt="salvar" />
         </button>
