@@ -4,6 +4,7 @@ import { useNotebookContext } from '../NotebookContext';
 
 import BackendApi from '../../../services/BackendApi';
 import SaveButton from './SaveButton/SaveButton';
+import TagsMiniPanel from './TagsMiniPanel/TagsMiniPanel';
 
 function ActionsPanel() {
     const notebookContext = useNotebookContext();
@@ -31,6 +32,7 @@ function ActionsPanel() {
     return (
         <>
             <SaveButton saveFunction={saveButtonClick} enabled={canSave} />
+            <TagsMiniPanel />
         </>
     );
 }

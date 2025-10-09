@@ -469,6 +469,35 @@ class BackendApi {
             throw new Error(`Delete annotation failed with status: ${response.status} (${getReasonPhrase(response.status)})`);
         }
     }
+
+    /**
+     * Retrieves all tags for the specified user.
+     * 
+     * @param {number} userId - The ID of the user whose tags are to be fetched
+     * @returns {Promise<Array>} An array of tags. Each tag is an object with properties: id, name
+     * @throws {Error} If the fetch tags request fails for any reason
+     */
+    async getAllTagsForUser(userId) {
+        if (this.#debug) {
+            console.log('[BackendApi] Fetching all tags for user.');
+        }
+
+        try {
+            const response = await this.#axiosApi.get(`/tags?userId=${userId}`);
+            
+            if (this.#debug) {
+                console.log('[BackendApi] Tags fetched successfully');
+            }
+
+            return response.data.tags;
+        } catch (error) {
+            if (this.#debug) {
+                console.warn('[BackendApi] Fetch tags request failed');
+            }
+
+            throw new Error(`Fetch tags failed with status: ${response.status} (${getReasonPhrase(response.status)})`);
+        }
+    }
 }
 
 export { ValidationErrors, BadCredentialsError };

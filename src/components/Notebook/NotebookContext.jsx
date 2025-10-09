@@ -1,5 +1,8 @@
 import { createContext, useContext, useState, useEffect } from "react";
 
+import { useAuthContext } from "../AuthContext/AuthContext";
+import BackendApi from "../../services/BackendApi";
+
 const _NotebookContext = createContext(null);
 
 function useNotebookContext() {
@@ -7,7 +10,19 @@ function useNotebookContext() {
 }
 
 function NotebookContext({ children }) {
+    const authContext = useAuthContext();
+    const userId = authContext.userId;
+
     const [activeNoteId, setActiveNoteId] = useState(null);
+
+    const [activeNoteTags, setActiveNoteTags] = useState([]);
+    const [userTags, setUserTags] = useState([]);
+    const loadUserTags = async () => {
+        if (userId) {
+            const tags = await BackendApi.getUserTags(userId);
+            setUserTags(tags);
+        }
+    };
 
     const [currentNoteTitle, setCurrentNoteTitle] = useState('');
     const [lastSavedNoteTitle, setLastSavedNoteTitle] = useState('');
@@ -15,13 +30,16 @@ function NotebookContext({ children }) {
     const [lastSavedNoteText, setLastSavedNoteText] = useState('');
 
     const [canSaveNote, setCanSaveNote] = useState(false);
-    
+
     // Used to trigger save when needed
     const [saveTrigger, setSaveTrigger] = useState(false);
-    const triggerSaveFunction = () => {
-        setSaveTrigger(!saveTrigger);
-    }
+    const triggerSaveFunction = () => setSaveTrigger(!saveTrigger);
 
+    // ------------- Setting up effects -------------
+    /**
+     * Every time the current note title or text changes, check if it is different from the last saved state
+     * to enable/disable the save button
+     */
     useEffect(() => {
         const titleChanged = (currentNoteTitle !== lastSavedNoteTitle);
         const textChanged = (currentNoteText !== lastSavedNoteText);
@@ -29,9 +47,42 @@ function NotebookContext({ children }) {
         setCanSaveNote(titleChanged || textChanged);
     }, [currentNoteTitle, lastSavedNoteTitle, currentNoteText, lastSavedNoteText]);
 
+    /**
+     * Every time the userId changes (login/logout), load the user's tags
+     */
+    useEffect(() => { loadUserTags() }, [userId]);
+
+    /**
+     * Every time the active note changes, load its data (title, text, tags)
+     */
+    useEffect(() => {
+        const loadNoteData = async () => {
+            if (activeNoteId) {
+                const annotationData = await BackendApi.getAnnotationData(activeNoteId, false);
+
+                setCurrentNoteTitle(annotationData.title);
+                setCurrentNoteText(annotationData.text);
+
+                // When loading the note, the last saved states will be the same as the current ones
+                setLastSavedNoteTitle(annotationData.title);
+                setLastSavedNoteText(annotationData.text);
+
+                // Load tags for this note
+                setActiveNoteTags(annotationData.tags);
+            }
+        }
+
+        loadNoteData();
+    }, [activeNoteId]);
+
     const ctxValue = {
         activeNoteId,
         setActiveNoteId,
+
+        activeNoteTags,
+        setActiveNoteTags,
+        userTags,
+        loadUserTags,
 
         canSaveNote,
         saveTrigger,
@@ -41,7 +92,7 @@ function NotebookContext({ children }) {
         setCurrentNoteTitle,
         lastSavedNoteTitle,
         setLastSavedNoteTitle,
-        
+
         currentNoteText,
         setCurrentNoteText,
         lastSavedNoteText,

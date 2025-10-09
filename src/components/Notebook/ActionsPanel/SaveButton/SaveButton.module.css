@@ -29,8 +29,8 @@
 }
 
 .saveButton img {
-    width: 60px;
-    height: 60px;
+    width: var(--actions-panel-icon-size);
+    height: var(--actions-panel-icon-size);
 }
 
 .saveButton:hover {

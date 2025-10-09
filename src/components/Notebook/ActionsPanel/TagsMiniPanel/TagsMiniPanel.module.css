@@ -1,0 +1,94 @@
+.tagsMiniPanelWrapper {
+    position: relative;
+
+    width: var(--actions-panel-icon-size);
+    height: fit-content;
+
+    padding: 0;
+    margin: 0;
+}
+
+.tagsMiniPanel {
+    margin: 0;
+    padding: 1rem 0;
+
+    position: absolute;
+    top: 0;
+    right: 0;
+
+    user-select: none;
+    cursor: pointer;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    background-color: #54c7ff;
+    border-radius: 50px;
+
+    width: var(--actions-panel-icon-size);
+
+    transition: all 0.3s ease-in-out;
+}
+
+.tagsMiniPanelTitle {
+    writing-mode: vertical-lr;
+    text-orientation: upright;
+
+    margin: 0;
+    padding: 0;
+}
+
+.tagsMiniPanel p {
+    text-align: center;
+
+    font-family: var(--font-notebook);
+    font-size: var(--font-body-size);
+}
+
+.tagsMenuOpen {
+    background-color: rgb(233, 233, 233);
+
+    width: calc(5 * var(--actions-panel-icon-size));
+}
+
+.tag {
+    background-color: #5754ff;
+    color: white;
+
+    padding: 0.2rem 0.5rem;
+    margin: 0.2rem 0;
+
+    border-radius: 20px;
+
+    font-family: var(--font-notebook);
+    font-size: var(--font-body-size);
+}
+
+.addTagButton {
+    margin-top: 0.5rem;
+
+    width: fit-content;
+    height: 2rem;
+    padding: 0.5rem 0.5rem;
+
+    background-color: #54c7ff;
+    border: none;
+    border-radius: 20px;
+
+    color: white;
+
+    font-family: var(--font-notebook);
+    font-size: 12pt;
+
+    cursor: default;
+}
+
+.addTagButton:hover {
+    background-color: #42a1cc;
+}
+
+.addTagButton:active {
+    background-color: #2d6a99;
+}
