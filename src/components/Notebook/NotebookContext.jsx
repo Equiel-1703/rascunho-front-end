@@ -11,7 +11,7 @@ function useNotebookContext() {
 
 function NotebookContext({ children }) {
     const authContext = useAuthContext();
-    const userId = authContext.userId;
+    const userId = authContext.loggedUserId;
 
     const [activeNoteId, setActiveNoteId] = useState(null);
 
@@ -19,7 +19,7 @@ function NotebookContext({ children }) {
     const [userTags, setUserTags] = useState([]);
     const loadUserTags = async () => {
         if (userId) {
-            const tags = await BackendApi.getUserTags(userId);
+            const tags = await BackendApi.getAllTagsForUser(userId);
             setUserTags(tags);
         }
     };
@@ -46,11 +46,6 @@ function NotebookContext({ children }) {
 
         setCanSaveNote(titleChanged || textChanged);
     }, [currentNoteTitle, lastSavedNoteTitle, currentNoteText, lastSavedNoteText]);
-
-    /**
-     * Every time the userId changes (login/logout), load the user's tags
-     */
-    useEffect(() => { loadUserTags() }, [userId]);
 
     /**
      * Every time the active note changes, load its data (title, text, tags)
