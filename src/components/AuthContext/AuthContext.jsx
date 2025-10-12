@@ -36,7 +36,7 @@ function AuthContext({ children }) {
                 // We start by checking if the user is logged in
                 checkLoginResult = await BackendApi.isUserLoggedIn();
             } catch (error) {
-                console.error("An unexpected error occurred while checking if the user is logged in: ", error);
+                console.error("[AuthContext] An unexpected error occurred while checking if the user is logged in: ", error);
 
                 setUnexpectedError(true);
                 setLoading(false);
@@ -52,7 +52,7 @@ function AuthContext({ children }) {
                 // If the user is not logged in, we can redirect to login page
 
                 // For now we just log a message to the console
-                console.log("User is not logged in");
+                console.log("[AuthContext] User is not logged in");
             }
 
             setLoading(false);
