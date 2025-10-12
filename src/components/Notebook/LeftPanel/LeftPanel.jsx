@@ -12,15 +12,16 @@ import CriarNota from './CriarNota/CriarNota.jsx';
 import CriarTag from './CriarTag/CriarTag.jsx';
 
 function LeftPanel() {
-    const [selectedTab, setSelectedTab] = useState('notas');
-    const [notes, setNotes] = useState(null);
-    const [tags, setTags] = useState(null);
-
     const authContext = useAuthContext();
     const userId = authContext.loggedUserId;
 
     const notebookContext = useNotebookContext();
     const saveTrigger = notebookContext.saveTrigger;
+
+
+    const [selectedTab, setSelectedTab] = useState('notas');
+    const [notes, setNotes] = useState(null);
+    const [tags, loadTags] = [notebookContext.userTags, () => { notebookContext.loadUserTags() }];
 
     // This will load all notes for the current user
     const loadNotes = async () => {
@@ -49,16 +50,6 @@ function LeftPanel() {
         }
     }
 
-    // This will load all tags for the current user
-    const loadTags = async () => {
-        try {
-            const loadedTags = await BackendApi.getAllTagsForUser(userId);
-            setTags(loadedTags);
-        } catch (error) {
-            console.error("[LeftPanel] An error occurred while loading tags: ", error);
-        }
-    }
-
     const clickTag = (tagId) => {
         console.log("Tag clicked: ", tagId);
     }
@@ -75,7 +66,7 @@ function LeftPanel() {
     }
 
 
-    // When a new user logs in, or when a save is triggered, reload notes and tags
+    // When a user logs in or out, or when a save is triggered, reload notes and tags
     useEffect(() => {
         loadNotes();
         loadTags();
