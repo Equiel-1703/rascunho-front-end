@@ -2,13 +2,13 @@ import styles from './ManageTags.module.css';
 
 import { useState } from 'react';
 
-function renderTagList(tags, onTagClick, conditionFn = null) {
+function renderTagList(tags, onTagClick, conditionToShow = null) {
     if (tags.length === 0) {
-        return <p>-</p>;
+        return <p className={styles.noTags}>Nenhuma tag aqui</p>;
     }
 
     return tags.map((tag) => {
-        if (conditionFn && !conditionFn(tag)) {
+        if (conditionToShow && !conditionToShow(tag)) {
             return null;
         }
 
@@ -16,7 +16,7 @@ function renderTagList(tags, onTagClick, conditionFn = null) {
             <div
                 key={tag.id}
                 className={styles.tag}
-                onTagClick={
+                onClick={
                     (e) => {
                         e.stopPropagation();
                         onTagClick(tag);
@@ -34,12 +34,51 @@ function ManageTags({ isOpen, onClose, currentTags, allTags, onSave }) {
         return null;
     }
 
-    const [tagsToAdd, setTagsToAdd] = useState([1, 2, 3]);
-    const [tagsToRemove, setTagsToRemove] = useState([4, 5, 6]);
+    const [tagsToAdd, setTagsToAdd] = useState([]);
+    const [tagsToRemove, setTagsToRemove] = useState([]);
 
-    const isTagInCurrentTags = (tag) => {
+    const [availableTags, setAvailableTags] = useState(allTags);
+    const [presentTags, setPresentTags] = useState(currentTags);
+
+    const isTagAlreadyPresent = (tag) => {
         return currentTags.some((t) => t.id === tag.id);
     };
+
+    const clickAvailableTag = (tag) => {
+        // Remove from available tags
+        setAvailableTags(availableTags.filter((t) => t.id !== tag.id));
+
+        // Add to present tags
+        setPresentTags([...presentTags, tag]);
+
+        // Mark for addition in save, if the tag is not present in the note initially
+        if (!isTagAlreadyPresent(tag)) {
+            setTagsToAdd([...tagsToAdd, tag.id]);
+        }
+
+        // If it was marked for removal, unmark it
+        if (tagsToRemove.includes(tag.id)) {
+            setTagsToRemove(tagsToRemove.filter((id) => id !== tag.id));
+        }
+    }
+
+    const clickPresentTag = (tag) => {
+        // Remove from present tags
+        setPresentTags(presentTags.filter((t) => t.id !== tag.id));
+
+        // Add to available tags
+        setAvailableTags([...availableTags, tag]);
+
+        // Mark for removal in save, if the tag is present in the note initially
+        if (isTagAlreadyPresent(tag)) {
+            setTagsToRemove([...tagsToRemove, tag.id]);
+        }
+
+        // If it was marked for addition, unmark it
+        if (tagsToAdd.includes(tag.id)) {
+            setTagsToAdd(tagsToAdd.filter((id) => id !== tag.id));
+        }
+    }
 
     return (
         <div
@@ -65,11 +104,9 @@ function ManageTags({ isOpen, onClose, currentTags, allTags, onSave }) {
                         <div className={styles.tagsContainer}>
                             {
                                 renderTagList(
-                                    allTags,
-                                    (tag) => {
-                                        console.log(`I was clicked! Id: ${tag.id}, Name: ${tag.name}`);
-                                    },
-                                    (tag) => !isTagInCurrentTags(tag)
+                                    availableTags,
+                                    clickAvailableTag,
+                                    (tag) => !isTagAlreadyPresent(tag)
                                 )
                             }
                         </div>
@@ -79,10 +116,8 @@ function ManageTags({ isOpen, onClose, currentTags, allTags, onSave }) {
                         <div className={styles.tagsContainer}>
                             {
                                 renderTagList(
-                                    currentTags,
-                                    (tag) => {
-                                        console.log(`I was clicked! Id: ${tag.id}, Name: ${tag.name}`);
-                                    }
+                                    presentTags,
+                                    clickPresentTag
                                 )
                             }
                         </div>

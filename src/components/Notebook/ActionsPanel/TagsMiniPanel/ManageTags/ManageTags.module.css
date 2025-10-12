@@ -68,6 +68,14 @@
     justify-content: space-evenly;
 }
 
+.noTags {
+    font-family: var(--font-notebook);
+    color: gray;
+
+    margin: 0;
+    padding: 0;
+}
+
 .tagsContainer {
     display: flex;
     flex-direction: row;
@@ -90,18 +98,31 @@
     background-color: #eeeeee;
 }
 
+.tag {
+    background-color: var(--color-header);
+    color: white;
+
+    padding: 5px 10px;
+    border-radius: 50px;
+
+    cursor: pointer;
+
+    font-family: var(--font-notebook);
+    font-size: 0.9rem;
+}
+
 .saveButton {
     background-color: var(--color-header);
     color: white;
-    
+
     border: none;
 
     margin-top: 1rem;
     padding: 10px 20px;
     border-radius: 50px;
-    
+
     cursor: pointer;
-    
+
     font-family: var(--font-notebook);
     font-size: 1rem;
 }
