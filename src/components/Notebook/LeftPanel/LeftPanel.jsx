@@ -60,7 +60,7 @@ function LeftPanel() {
     }
 
     const clickTag = (tagId) => {
-        // Implement if needed
+        console.log("Tag clicked: ", tagId);
     }
 
     const deleteTag = async (tagId) => {
@@ -126,6 +126,7 @@ function LeftPanel() {
                                         key={tag.id}
                                         tagId={tag.id}
                                         name={tag.name}
+                                        onClickCallback={clickTag}
                                         onDeleteCallback={deleteTag}
                                     />
                                 ))

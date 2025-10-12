@@ -18,7 +18,7 @@ function getRandomColorIndex() {
     return Math.floor(Math.random() * tagsColors.length);
 }
 
-function InlineEdit({ value, onChangeCallback, className, bgColor }) {
+function InlineEdit({ value, onChangeCallback, className }) {
     const [isEditing, setIsEditing] = useState(false);
     const [text, setText] = useState(value);
 
@@ -55,13 +55,13 @@ function InlineEdit({ value, onChangeCallback, className, bgColor }) {
             onBlur={handleBlur}
             onKeyDown={handleKeyDown}
             className={className}
-            style={{ backgroundColor: bgColor || 'transparent' }}
+            style={{ backgroundColor: 'transparent' }}
         />
     ) : (
         <span
             onDoubleClick={handleDoubleClick}
             className={className}
-            style={{ backgroundColor: bgColor || 'transparent' }}
+            style={{ backgroundColor: 'transparent' }}
         >
             {text}
         </span>
@@ -83,16 +83,17 @@ function Tag({ tagId, name, onClickCallback, onDeleteCallback }) {
                     console.log(`Tag ${tagId} renamed to: ${newName}`);
                 }}
                 className={styles.tagName}
-                bgColor={bgColor}
             />
 
             <button
                 className={styles.deleteButton}
-                style={{ backgroundColor: bgColor }}
+                style={{ backgroundColor: 'transparent' }}
+
                 onClick={(e) => {
                     e.stopPropagation(); // Prevent triggering the onClick of the parent div
                     onDeleteCallback(tagId);
                 }}
+                
                 aria-label="Deletar tag"
                 title="Deletar tag"
             >
