@@ -7,11 +7,14 @@ import { useAuthContext } from '../../AuthContext/AuthContext.jsx';
 import { useNotebookContext } from '../NotebookContext.jsx';
 
 import Nota from './Nota/Nota.jsx';
+import Tag from './Tag/Tag.jsx';
 import CriarNota from './CriarNota/CriarNota.jsx';
+import CriarTag from './CriarTag/CriarTag.jsx';
 
 function LeftPanel() {
     const [selectedTab, setSelectedTab] = useState('notas');
     const [notes, setNotes] = useState(null);
+    const [tags, setTags] = useState(null);
 
     const authContext = useAuthContext();
     const userId = authContext.loggedUserId;
@@ -46,13 +49,40 @@ function LeftPanel() {
         }
     }
 
-    // When a new user logs in, or when a save is triggered, reload notes
+    // This will load all tags for the current user
+    const loadTags = async () => {
+        try {
+            const loadedTags = await BackendApi.getAllTagsForUser(userId);
+            setTags(loadedTags);
+        } catch (error) {
+            console.error("[LeftPanel] An error occurred while loading tags: ", error);
+        }
+    }
+
+    const clickTag = (tagId) => {
+        // Implement if needed
+    }
+
+    const deleteTag = async (tagId) => {
+        try {
+            await BackendApi.deleteTag(tagId);
+
+            // After deleting, reload tags on the left panel
+            loadTags();
+        } catch (error) {
+            console.error("[LeftPanel] An error occurred while deleting tag: ", error);
+        }
+    }
+
+
+    // When a new user logs in, or when a save is triggered, reload notes and tags
     useEffect(() => {
         loadNotes();
+        loadTags();
     }, [userId, saveTrigger]);
 
     return (
-        <>
+        <div className={styles.leftPanel}>
             <ul className={styles.tabs}>
                 <li
                     className={styles.tab + (selectedTab === 'notas' ? ` ${styles.activeTab}` : ` ${styles.inactiveTab}`)}
@@ -89,11 +119,23 @@ function LeftPanel() {
                 }
                 {
                     selectedTab === 'tags' && (
-                        <p>Tags</p>
+                        <>
+                            {
+                                tags && tags.map((tag) => (
+                                    <Tag
+                                        key={tag.id}
+                                        tagId={tag.id}
+                                        name={tag.name}
+                                        onDeleteCallback={deleteTag}
+                                    />
+                                ))
+                            }
+                            <CriarTag userId={userId} callback={loadTags} />
+                        </>
                     )
                 }
             </div>
-        </>
+        </div>
     );
 }
 

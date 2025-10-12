@@ -30,10 +30,10 @@ function ActionsPanel() {
     }
 
     return (
-        <>
+        <div className={styles.actionsPanel}>
             <SaveButton saveFunction={saveButtonClick} enabled={canSave} />
             <TagsMiniPanel />
-        </>
+        </div>
     );
 }
 

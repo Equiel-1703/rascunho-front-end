@@ -10,15 +10,9 @@ function Notebook() {
     return (
         <div className={styles.mainContainer}>
             <NotebookContext>
-                <div className={styles.leftPanel}>
-                    <LeftPanel />
-                </div>
-                <div className={styles.mainPanel}>
-                    <MainPanel />
-                </div>
-                <div className={styles.actionsPanel}>
-                    <ActionsPanel />
-                </div>
+                <LeftPanel />
+                <MainPanel />
+                <ActionsPanel />
             </NotebookContext>
         </div>
     );
