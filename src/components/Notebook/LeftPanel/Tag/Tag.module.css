@@ -1,0 +1,59 @@
+.tag {
+    height: 2rem;
+    
+    padding: 1rem;
+    margin: 0;
+    margin-top: 1rem;
+    
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+    border-radius: 0;
+    border-bottom-right-radius: 25px;
+}
+
+.tagName {
+    padding: 0;
+
+    width: 100%;
+
+    font-family: var(--font-notebook);
+    font-size: var(--font-body-size);
+
+    text-align: center;
+}
+
+.deleteButton {
+    padding: 0;
+    margin: 0;
+    background-color: transparent;
+    border: none;
+    outline: none;
+
+    color: rgb(31, 12, 44);
+
+    width: 1.5rem;
+    height: 1.5rem;
+
+    font-family: var(--font-notebook);
+    font-size: 1rem;
+    font-weight: bold;
+
+    cursor: default;
+
+    transform-origin: center;
+    transform: scale(1);
+
+    transition:
+        transform 0.2s,
+        color 0.2s;
+}
+
+.deleteButton:hover {
+    color: rgb(200, 50, 50);
+
+    transform-origin: center;
+    transform: scale(1.5);
+}

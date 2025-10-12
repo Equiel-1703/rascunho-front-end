@@ -484,7 +484,7 @@ class BackendApi {
 
         try {
             const response = await this.#axiosApi.get(`/tags?userId=${userId}`);
-            
+
             if (this.#debug) {
                 console.log('[BackendApi] Tags fetched successfully');
             }
@@ -496,6 +496,97 @@ class BackendApi {
             }
 
             throw new Error(`Fetch tags failed with status: ${response.status} (${getReasonPhrase(response.status)})`);
+        }
+    }
+
+    /**
+     * Creates a new tag with the specified name for the given user.
+     * 
+     * @param {number} userId - The ID of the user for whom the tag is to be created
+     * @param {string} name - The name of the new tag
+     * @returns {Promise<number>} The ID of the created tag
+     * @throws {Error} If the create tag request fails for any reason
+     */
+    async createTag(userId, name) {
+        if (this.#debug) {
+            console.log('[BackendApi] Creating tag.');
+        }
+
+        try {
+            const response = await this.#axiosApi.post('/tags', { userId, name });
+
+            if (this.#debug) {
+                console.log('[BackendApi] Tag created successfully');
+            }
+
+            return response.data.id;
+        } catch (error) {
+            if (this.#debug) {
+                console.warn('[BackendApi] Create tag request failed');
+            }
+
+            throw new Error(`Create tag failed with status: ${response.status} (${getReasonPhrase(response.status)})`);
+        }
+    }
+
+    /**
+     * Updates the tag with the specified ID, setting its name.
+     * 
+     * @param {number} tagId - The ID of the tag to update
+     * @param {string} name - The new name for the tag
+     * @param {number} userId - The ID of the user who owns the tag
+     * @returns {Promise<void>} A promise that resolves if the update is successful
+     * @throws {Error} If the update tag request fails for any reason
+     */
+    async updateTag(tagId, userId, name) {
+        if (this.#debug) {
+            console.log('[BackendApi] Updating tag with id: ', tagId);
+            console.log('[BackendApi] New name: ', name);
+        }
+
+        try {
+            await this.#axiosApi.post(`/tags/${tagId}`, { name, userId });
+
+            if (this.#debug) {
+                console.log('[BackendApi] Tag updated successfully');
+            }
+
+            return;
+        } catch (error) {
+            if (this.#debug) {
+                console.warn('[BackendApi] Update tag request failed');
+            }
+
+            throw new Error(`Update tag failed with status: ${response.status} (${getReasonPhrase(response.status)})`);
+        }
+    }
+
+    /**
+     * Deletes the tag with the specified ID.
+     * 
+     * @param {number} tagId - The ID of the tag to delete
+     * @returns {Promise<void>} A promise that resolves if the deletion is successful
+     * @throws {Error} If the delete tag request fails for any reason
+     */
+    async deleteTag(tagId) {
+        if (this.#debug) {
+            console.log('[BackendApi] Deleting tag with id: ', tagId);
+        }
+
+        try {
+            await this.#axiosApi.delete(`/tags/${tagId}`);
+
+            if (this.#debug) {
+                console.log('[BackendApi] Tag deleted successfully');
+            }
+
+            return;
+        } catch (error) {
+            if (this.#debug) {
+                console.warn('[BackendApi] Delete tag request failed');
+            }
+
+            throw new Error(`Delete tag failed with status: ${response.status} (${getReasonPhrase(response.status)})`);
         }
     }
 }

@@ -1,0 +1,53 @@
+:root {
+    --size-button-new-tag: 80px;
+}
+
+.newTagButton {
+    width: var(--size-button-new-tag);
+    height: var(--size-button-new-tag);
+
+    border: none;
+    border-radius: 50%;
+
+    background-color: white;
+    color: var(--color-header);
+
+    font-family: var(--font-notebook);
+    font-size: 2rem;
+    font-weight: bold;
+
+    padding: 0;
+    margin: 0;
+    margin-top: 1rem;
+
+    transform: scale(1);
+
+    overflow: hidden;
+}
+
+.newTagButton:hover {
+    box-shadow: 0 4px 8px rgba(105, 0, 241, 0.123);
+
+    transform: scale(1.1);
+    transition:
+        transform 0.2s,
+        box-shadow 0.2s;
+}
+
+.newTagButton img {
+    width: var(--size-button-new-tag);
+    height: var(--size-button-new-tag);
+}
+
+.newTagLoading {
+    animation: loading 1s linear infinite;
+}
+
+@keyframes loading {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
