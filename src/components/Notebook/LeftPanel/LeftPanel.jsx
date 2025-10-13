@@ -42,6 +42,8 @@ function LeftPanel() {
         }
     }
 
+    // --------- Callbacks for notes ---------
+
     // This will be called when a note is clicked
     const clickNote = (noteId) => {
         notebookContext.setActiveNoteId(noteId);
@@ -59,6 +61,8 @@ function LeftPanel() {
             console.error("[LeftPanel] An error occurred while deleting note: ", error);
         }
     }
+
+    // --------- Callbacks for tags ---------
 
     // This will hold the tag object used to filter notes by tag.
     // The object has 'id' and 'name' fields.
@@ -82,6 +86,22 @@ function LeftPanel() {
     const clearTagFilter = () => {
         setTagFilter(null);
         loadNotes();
+    }
+
+    const renameTag = async (tagId, oldName, newName) => {
+        if (oldName === newName) {
+            console.log("[LeftPanel] Tag name unchanged, not renaming.");
+            return; // No change
+        }
+
+        try {
+            await BackendApi.updateTag(tagId, userId, newName);
+
+            // After renaming, reload tags on the left panel
+            loadTags();
+        } catch (error) {
+            console.error("[LeftPanel] An error occurred while renaming tag: ", error);
+        }
     }
 
     const deleteTag = async (tagId) => {
@@ -162,6 +182,7 @@ function LeftPanel() {
                                         name={tag.name}
                                         onClickCallback={clickTag}
                                         onDeleteCallback={deleteTag}
+                                        renameCallback={renameTag}
                                     />
                                 ))
                             }

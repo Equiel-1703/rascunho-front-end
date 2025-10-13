@@ -2,22 +2,6 @@ import styles from './Tag.module.css';
 
 import { useState, useEffect, useRef } from 'react';
 
-const tagsColors = [
-    '#9B177E',
-    '#FFEAD8',
-    '#EA2264',
-    '#640D5F',
-    '#8FA31E',
-    '#EF7722',
-    '#FF0066',
-    '#40E0D0',
-    '#F6DC43'
-];
-
-function getRandomColorIndex() {
-    return Math.floor(Math.random() * tagsColors.length);
-}
-
 function InlineEdit({ value, onChangeCallback, className }) {
     const [isEditing, setIsEditing] = useState(false);
     const [text, setText] = useState(value);
@@ -59,6 +43,7 @@ function InlineEdit({ value, onChangeCallback, className }) {
         />
     ) : (
         <span
+            onClick={(e) => e.stopPropagation()} // Prevent triggering parent onClick
             onDoubleClick={handleDoubleClick}
             className={className}
             style={{ backgroundColor: 'transparent' }}
@@ -68,8 +53,8 @@ function InlineEdit({ value, onChangeCallback, className }) {
     );
 }
 
-function Tag({ tagId, name, onClickCallback, onDeleteCallback }) {
-    const bgColor = tagsColors[getRandomColorIndex()];
+function Tag({ tagId, name, onClickCallback, onDeleteCallback, renameCallback }) {
+    const bgColor = 'rgb(227, 64, 156)'; // Fixed color for tags
     return (
         <div
             className={styles.tag}
@@ -78,10 +63,7 @@ function Tag({ tagId, name, onClickCallback, onDeleteCallback }) {
         >
             <InlineEdit
                 value={name}
-                onChangeCallback={(newName) => {
-                    // Handle name change if needed
-                    console.log(`Tag ${tagId} renamed to: ${newName}`);
-                }}
+                onChangeCallback={(text) => renameCallback(tagId, name, text)}
                 className={styles.tagName}
             />
 

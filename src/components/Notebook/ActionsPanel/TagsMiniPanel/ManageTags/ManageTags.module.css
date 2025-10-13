@@ -41,9 +41,16 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+
+    border-bottom: 2px solid var(--color-header);
+    
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
 }
 
 .modalHeader h2 {
+    font-family: var(--font-notebook-body);
+    font-size: 1.5rem;
     margin: 0;
 }
 
@@ -117,7 +124,7 @@
 
     border: none;
 
-    margin-top: 1rem;
+    margin-top: 2rem;
     padding: 10px 20px;
     border-radius: 50px;
 
