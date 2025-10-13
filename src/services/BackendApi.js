@@ -409,15 +409,19 @@ class BackendApi {
      * @param {string} title - The new title for the annotation
      * @param {string} text - The new text content for the annotation
      * @param {number} colorIndex - The new color index for the annotation
+     * @param {Array<number>} addTagId - An array of tag IDs to add to the annotation
+     * @param {Array<number>} removeTagId - An array of tag IDs to remove from the annotation
      * @returns {Promise<void>} A promise that resolves if the update is successful
      * @throws {Error} If the update annotation request fails for any reason
      */
-    async updateAnnotation(annotationId, title, text, colorIndex = null) {
-        let saveObject = { title, text };
-
-        if (colorIndex !== null) {
-            saveObject.colorIndex = colorIndex;
-        }
+    async updateAnnotation(annotationId, title, text, colorIndex = null, addTagId = [], removeTagId = []) {
+        const saveObject = {
+            title,
+            text,
+            ...(colorIndex !== null && { colorIndex }),
+            ...(addTagId.length > 0 && { addTagId }),
+            ...(removeTagId.length > 0 && { removeTagId })
+        };
 
         if (this.#debug) {
             console.log('[BackendApi] Updating annotation with id: ', annotationId);
