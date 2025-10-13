@@ -32,11 +32,22 @@ function LeftPanel() {
         }
     }
 
+    // This will load all notes for the current user filtered by a tag
+    const loadNotesByTag = async (tagId) => {
+        try {
+            const loadedNotes = await BackendApi.getAllAnnotationsForUserFilteredByTag(userId, tagId);
+            setNotes(loadedNotes);
+        } catch (error) {
+            console.error("[LeftPanel] An error occurred while loading notes by tag: ", error);
+        }
+    }
+
     // This will be called when a note is clicked
     const clickNote = (noteId) => {
         notebookContext.setActiveNoteId(noteId);
     }
 
+    // This will be called when a note is deleted
     const deleteNote = async (noteId) => {
         try {
             await BackendApi.deleteAnnotation(noteId);
@@ -49,8 +60,28 @@ function LeftPanel() {
         }
     }
 
-    const clickTag = (tagId) => {
-        console.log("Tag clicked: ", tagId);
+    // This will hold the tag object used to filter notes by tag.
+    // The object has 'id' and 'name' fields.
+    // If null, no filter is applied
+    const [tagFilter, setTagFilter] = useState(null);
+
+    const clickTag = ({ tagId, name, bgColor }) => {
+        // Set the tag filter
+        setTagFilter({ tagId, name, bgColor });
+
+        // Clear the active note
+        notebookContext.setActiveNoteId(null);
+
+        // Switch to notes tab
+        setSelectedTab('notas');
+
+        // Load notes filtered by this tag
+        loadNotesByTag(tagId);
+    }
+
+    const clearTagFilter = () => {
+        setTagFilter(null);
+        loadNotes();
     }
 
     const deleteTag = async (tagId) => {
@@ -91,6 +122,19 @@ function LeftPanel() {
                 {
                     selectedTab === 'notas' && (
                         <>
+                            {
+                                tagFilter && (
+                                    <div
+                                        className={styles.tagFilterBanner}
+                                        style={{ backgroundColor: tagFilter.bgColor }}
+                                        onClick={clearTagFilter}
+                                    >
+                                        <strong>{tagFilter.name}</strong>
+                                        <br />
+                                        (clique para limpar filtro)
+                                    </div>
+                                )
+                            }
                             {
                                 notes && notes.map((note) => (
                                     <Nota

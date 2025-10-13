@@ -366,6 +366,41 @@ class BackendApi {
     }
 
     /**
+     * Retrieves all annotations for the specified user that are tagged with the specified tag.
+     * 
+     * OBS: This method can filter by multiple tags ids in the backend, but the front-end currently
+     * only uses it to filter by a single tag id.
+     * 
+     * In the future, we can extend the front-end to allow filtering by multiple tags at once.
+     * 
+     * @param {number} userId - The ID of the user whose annotations are to be fetched
+     * @param {number} tagId - The ID of the tag to filter annotations by
+     * @returns {Promise<Array>} An array of annotations. Each annotation is an object with properties: id, colorIndex, title
+     * @throws {Error} If the fetch annotations request fails for any reason
+     */
+    async getAllAnnotationsForUserFilteredByTag(userId, tagId) {
+        if (this.#debug) {
+            console.log('[BackendApi] Fetching all annotations for user filtered by tag.');
+        }
+
+        try {
+            const response = await this.#axiosApi.get(`/annotations?userId=${userId}&withTags=${tagId}`);
+
+            if (this.#debug) {
+                console.log('[BackendApi] Annotations fetched successfully');
+            }
+
+            return response.data.annotations;
+        } catch (error) {
+            if (this.#debug) {
+                console.warn('[BackendApi] Fetch annotations request failed');
+            }
+
+            throw new Error(`Fetch annotations failed with status: ${response.status} (${getReasonPhrase(response.status)})`);
+        }
+    }
+
+    /**
      * Retrieves the data for a specific annotation by its ID.
      *
      * @param {number} annotationId - The ID of the annotation to retrieve.

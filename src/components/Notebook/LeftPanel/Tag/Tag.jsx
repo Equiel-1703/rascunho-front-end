@@ -73,7 +73,7 @@ function Tag({ tagId, name, onClickCallback, onDeleteCallback }) {
     return (
         <div
             className={styles.tag}
-            onClick={() => onClickCallback(tagId)}
+            onClick={() => onClickCallback({ tagId, name, bgColor })}
             style={{ backgroundColor: bgColor }}
         >
             <InlineEdit
@@ -93,7 +93,7 @@ function Tag({ tagId, name, onClickCallback, onDeleteCallback }) {
                     e.stopPropagation(); // Prevent triggering the onClick of the parent div
                     onDeleteCallback(tagId);
                 }}
-                
+
                 aria-label="Deletar tag"
                 title="Deletar tag"
             >

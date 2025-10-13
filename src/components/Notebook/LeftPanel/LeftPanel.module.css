@@ -1,17 +1,17 @@
 :root {
     --default-tab-color: var(--panel-left-bg);
-    --select-tab-color: #FA812F;;
+    --select-tab-color: #FA812F;
     --click-tab-color: #DD0303;
 }
 
 .leftPanel {
     padding: 0;
     margin: 0;
-    
+
     height: 100%;
 
     flex: 1;
-    
+
     display: flex;
     flex-direction: column;
 }
@@ -78,4 +78,20 @@
 
     overflow-y: auto;
     overflow-x: clip;
+}
+
+.tagFilterBanner {
+    color: black;
+
+    margin: 0;
+    margin-bottom: 1rem;
+
+    border: none;
+    border-bottom-left-radius: 50px;
+    border-bottom-right-radius: 50px;
+
+    padding: 1rem 0.5rem;
+
+    font-family: var(--font-notebook);
+    font-size: var(--font-body-size);
 }
