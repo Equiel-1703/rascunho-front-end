@@ -16,6 +16,12 @@ function NotebookContext({ children }) {
     const [activeNoteId, setActiveNoteId] = useState(null);
 
     const [activeNoteTags, setActiveNoteTags] = useState([]);
+    const loadActiveNoteTags = async () => {
+        if (activeNoteId) {
+            const annotationData = await BackendApi.getAnnotationData(activeNoteId, true);
+            setActiveNoteTags(annotationData.tags);
+        }
+    };
     const [userTags, setUserTags] = useState([]);
     const loadUserTags = async () => {
         if (userId) {
@@ -53,7 +59,7 @@ function NotebookContext({ children }) {
     useEffect(() => {
         const loadNoteData = async () => {
             if (activeNoteId) {
-                const annotationData = await BackendApi.getAnnotationData(activeNoteId, false);
+                const annotationData = await BackendApi.getAnnotationData(activeNoteId, true);
 
                 setCurrentNoteTitle(annotationData.title);
                 setCurrentNoteText(annotationData.text);
@@ -65,7 +71,7 @@ function NotebookContext({ children }) {
                 // Load tags for this note
                 setActiveNoteTags(annotationData.tags);
             }
-        }
+        };
 
         loadNoteData();
     }, [activeNoteId]);
@@ -76,6 +82,7 @@ function NotebookContext({ children }) {
 
         activeNoteTags,
         setActiveNoteTags,
+        loadActiveNoteTags,
         userTags,
         loadUserTags,
 

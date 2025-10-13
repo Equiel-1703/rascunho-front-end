@@ -1,3 +1,9 @@
+.disabled {
+    pointer-events: none;
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 .tagsMiniPanelWrapper {
     position: relative;
 
@@ -64,6 +70,8 @@
 
     font-family: var(--font-notebook);
     font-size: var(--font-body-size);
+
+    cursor: default;
 }
 
 .addTagButton {

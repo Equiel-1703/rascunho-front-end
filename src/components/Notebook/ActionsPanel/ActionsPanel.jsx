@@ -8,6 +8,7 @@ import TagsMiniPanel from './TagsMiniPanel/TagsMiniPanel';
 
 function ActionsPanel() {
     const notebookContext = useNotebookContext();
+    const annotationId = notebookContext.activeNoteId;
 
     const canSave = notebookContext.canSaveNote;
     const triggerSaveFunction = notebookContext.triggerSaveFunction;
@@ -32,7 +33,7 @@ function ActionsPanel() {
     return (
         <div className={styles.actionsPanel}>
             <SaveButton saveFunction={saveButtonClick} enabled={canSave} />
-            <TagsMiniPanel />
+            <TagsMiniPanel enabled={annotationId !== null} />
         </div>
     );
 }

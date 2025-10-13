@@ -37,12 +37,13 @@ function ManageTags({ isOpen, onClose, currentTags, allTags, onSave }) {
     const [tagsToAdd, setTagsToAdd] = useState([]);
     const [tagsToRemove, setTagsToRemove] = useState([]);
 
-    const [availableTags, setAvailableTags] = useState(allTags);
-    const [presentTags, setPresentTags] = useState(currentTags);
-
     const isTagAlreadyPresent = (tag) => {
         return currentTags.some((t) => t.id === tag.id);
     };
+
+    const [availableTags, setAvailableTags] = useState(allTags.filter((tag) => !isTagAlreadyPresent(tag)));
+    const [presentTags, setPresentTags] = useState(currentTags);
+
 
     const clickAvailableTag = (tag) => {
         // Remove from available tags
@@ -105,8 +106,7 @@ function ManageTags({ isOpen, onClose, currentTags, allTags, onSave }) {
                             {
                                 renderTagList(
                                     availableTags,
-                                    clickAvailableTag,
-                                    (tag) => !isTagAlreadyPresent(tag)
+                                    clickAvailableTag
                                 )
                             }
                         </div>

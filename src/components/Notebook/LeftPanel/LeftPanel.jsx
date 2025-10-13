@@ -18,7 +18,6 @@ function LeftPanel() {
     const notebookContext = useNotebookContext();
     const saveTrigger = notebookContext.saveTrigger;
 
-
     const [selectedTab, setSelectedTab] = useState('notas');
     const [notes, setNotes] = useState(null);
     const [tags, loadTags] = [notebookContext.userTags, () => { notebookContext.loadUserTags() }];

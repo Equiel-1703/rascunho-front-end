@@ -4,6 +4,7 @@ import { useState } from 'react';
 
 import { useNotebookContext } from '../../NotebookContext';
 import ManageTags from './ManageTags/ManageTags.jsx';
+import BackendApi from '../../../../services/BackendApi';
 
 function Tag({ tag }) {
     return (
@@ -31,17 +32,12 @@ function ManageTagButton({ action }) {
     );
 }
 
-function saveNewTags({ tagsToAdd, tagsToRemove }) {
-    // Placeholder function to save new tags
-    // Implement the logic to update tags in the backend or context
-    console.log('Tags to add:', tagsToAdd);
-    console.log('Tags to remove:', tagsToRemove);
-}
-
-function TagsMiniPanel() {
+function TagsMiniPanel({ enabled }) {
     const notebookContext = useNotebookContext();
+    const annotationId = notebookContext.activeNoteId;
     const allTags = notebookContext.userTags;
     const currentTags = notebookContext.activeNoteTags;
+    const reloadTags = notebookContext.loadActiveNoteTags;
 
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const toggleMenu = () => {
@@ -52,12 +48,35 @@ function TagsMiniPanel() {
     const openManageTags = () => setIsManageTagsOpen(true);
     const closeManageTags = () => setIsManageTagsOpen(false);
 
+    const saveNewTags = async ({ tagsToAdd, tagsToRemove }) => {
+        if (tagsToAdd.length === 0 && tagsToRemove.length === 0) {
+            // Nothing to do
+            console.log("[TagsMiniPanel] No tag changes to save.");
+            return;
+        }
+
+        try {
+            await BackendApi.updateAnnotation(annotationId, null, null, null, tagsToAdd, tagsToRemove);
+
+            // After saving, reload the tags for the current note
+            await reloadTags();
+
+            console.log("[TagsMiniPanel] Tags updated successfully.");
+        } catch (error) {
+            console.error("[TagsMiniPanel] An error occurred while updating tags: ", error);
+        }
+    };
+
     let menuContent;
 
     if (!isMenuOpen) {
-        menuContent = <p className={styles.tagsMiniPanelTitle}>Tags</p>;
+        // Show only the 'Tags' title when the menu is closed
+        menuContent = (
+            <p className={styles.tagsMiniPanelTitle}>Tags</p>
+        );
     }
     else {
+        // When the menu is open, show the list of tags or a message if there are none
         menuContent = (
             (currentTags.length === 0) ? (
                 <p>Nenhuma tag para essa nota</p>
@@ -72,14 +91,17 @@ function TagsMiniPanel() {
     }
 
     return (
+        // We need a wrapper div to handle the open/close of the menu (absolute positioning)
         <div className={styles.tagsMiniPanelWrapper}>
             <div
                 className={
                     styles.tagsMiniPanel
                     + (isMenuOpen ? ` ${styles.tagsMenuOpen}` : '')
+                    + (enabled ? '' : ` ${styles.disabled}`)
                 }
                 onClick={toggleMenu}
             >
+                {/* This is the add/remove tags overlay */}
                 <ManageTags
                     isOpen={isManageTagsOpen}
                     onClose={closeManageTags}
@@ -88,6 +110,7 @@ function TagsMiniPanel() {
                     onSave={saveNewTags}
                 />
                 {menuContent}
+                {/* This is the button that triggers the add/remove tags overlay */}
                 {isMenuOpen && <ManageTagButton action={openManageTags} />}
             </div>
         </div>
