@@ -17,3 +17,27 @@
     justify-content: flex-start;
     gap: 1rem;
 }
+
+.leftMenuButton {
+    width: var(--actions-panel-icon-size);
+    height: var(--actions-panel-icon-size);
+
+    border: none;
+    border-radius: 50px;
+
+    background-color: #ec5e93;
+
+    font-family: var(--font-title);
+    font-weight: 400;
+    font-size: 2rem;
+    color: white;
+}
+
+.leftMenuButton:hover {
+    cursor: pointer;
+    background-color: #ff76a6;
+}
+
+.leftMenuButton:active {
+    background-color: #ec5e93;
+}

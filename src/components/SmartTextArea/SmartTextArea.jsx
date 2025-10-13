@@ -1,5 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 
+import { WindowSize } from '../WindowSize/WindowSize';
+
 function SmartTextArea(
     {
         text = '',
@@ -12,23 +14,7 @@ function SmartTextArea(
     }
 ) {
     const textAreaRef = useRef(null);
-    const [windowDimensions, setWindowDimensions] = useState({
-        width: window.innerWidth,
-        height: window.innerHeight
-    });
-
-    // Update window dimensions on resize to trigger re-calculation of textarea height
-    useEffect(() => {
-        const handleResize = () => {
-            setWindowDimensions({
-                width: window.innerWidth,
-                height: window.innerHeight
-            });
-        };
-
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
+    const windowDimensions = WindowSize();
 
     // This runs every time the text changes to adjust the height of the textarea
     useEffect(() => {

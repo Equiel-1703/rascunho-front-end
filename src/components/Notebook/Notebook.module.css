@@ -5,3 +5,51 @@
     height: 100%;
     width: 100%;
 }
+
+.mobileWrapper {
+    position: relative;
+    width: 0;
+    height: 0;
+}
+
+.leftPanelMobileOpen {
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 70vw;
+    height: 100vh;
+
+    background-color: transparent;
+    filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.3));
+
+    z-index: 1000;
+
+    transition: width 0.3s ease, height 0.3s ease;
+}
+
+.leftPanelMobileClosed {
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 0;
+    height: 0;
+
+    overflow: hidden;
+
+    transition: width 0.3s ease, height 0.3s ease;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    width: 100vw;
+    height: 100vh;
+
+    background-color: rgba(0, 0, 0, 0.5);
+
+    z-index: 999;
+}

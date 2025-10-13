@@ -6,7 +6,7 @@ import BackendApi from '../../../services/BackendApi';
 import SaveButton from './SaveButton/SaveButton';
 import TagsMiniPanel from './TagsMiniPanel/TagsMiniPanel';
 
-function ActionsPanel() {
+function ActionsPanel({ isMobile, toggleLeftMenu }) {
     const notebookContext = useNotebookContext();
     const annotationId = notebookContext.activeNoteId;
 
@@ -32,6 +32,16 @@ function ActionsPanel() {
 
     return (
         <div className={styles.actionsPanel}>
+            {
+                isMobile && (
+                    <button
+                        className={styles.leftMenuButton}
+                        onClick={toggleLeftMenu}
+                    >
+                        ☰
+                    </button>
+                )
+            }
             <SaveButton saveFunction={saveButtonClick} enabled={canSave} />
             <TagsMiniPanel enabled={annotationId !== null} />
         </div>
