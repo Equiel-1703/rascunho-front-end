@@ -18,8 +18,8 @@
     left: 0;
 
     width: 70vw;
-    height: 100vh;
-
+    /* height is set dynamically via code */
+    
     background-color: transparent;
     filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.3));
 
