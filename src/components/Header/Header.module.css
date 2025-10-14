@@ -31,8 +31,8 @@
 .header h1 {
     margin: 0;
 
-    font-family: var(--font-title);
-    font-size: var(--font-title-size);
+    font-family: var(--font-indie-flower);
+    font-size: var(--title-font-size);
     font-weight: 400;
 
     color: white;
@@ -63,8 +63,8 @@
     height: 50px;
     line-height: 50px;
 
-    font-family: var(--font-username);
-    font-size: var(--font-body-size);
+    font-family: var(--font-homemade-apple);
+    font-size: var(--body-font-size);
     font-weight: 400;
     text-align: center;
 
@@ -88,9 +88,9 @@
 
     background-color: #6d16a0;
 
-    font-family: var(--font-title);
+    font-family: var(--font-indie-flower);
     font-weight: 400;
-    font-size: var(--font-body-size);
+    font-size: var(--body-font-size);
 }
 
 .logoutButton:hover {

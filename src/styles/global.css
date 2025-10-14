@@ -6,15 +6,14 @@
     --color-bg: rgb(255, 234, 216);
     --color-header: rgb(93, 47, 119);
     
-    --font-title: 'Indie Flower', cursive;
-    --font-title-size: 5rem;
-
-    --font-body-size: 14pt;
-    --font-secondary-title-size: 24pt;
+    --font-indie-flower: 'Indie Flower', cursive;
+    --font-homemade-apple: 'Homemade Apple', cursive;
+    --font-fuzzy-bubbles: 'Fuzzy Bubbles', sans-serif;
+    --font-nunito: 'Nunito', sans-serif;
     
-    --font-username: 'Homemade Apple', cursive;
-    --font-notebook: 'Fuzzy Bubbles', sans-serif;
-    --font-notebook-body: 'Nunito', sans-serif;
+    --title-font-size: 5rem;
+    --secondary-title-font-size: 24pt;
+    --body-font-size: 14pt;
 
     --panels-padding: 2rem;
 

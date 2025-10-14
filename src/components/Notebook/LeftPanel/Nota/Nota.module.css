@@ -4,8 +4,8 @@
     align-items: center;
     justify-content: space-between;
 
-    font-family: var(--font-notebook);
-    font-size: var(--font-body-size);
+    font-family: var(--font-fuzzy-bubbles);
+    font-size: var(--body-font-size);
     font-weight: bold;
 
     width: 100%;
@@ -69,7 +69,7 @@
     width: 1.5rem;
     height: 1.5rem;
 
-    font-family: var(--font-notebook);
+    font-family: var(--font-fuzzy-bubbles);
     font-size: 1rem;
     font-weight: bold;
 

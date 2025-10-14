@@ -16,14 +16,14 @@
 }
 
 .note {
-    font-family: var(--font-notebook-body);
+    font-family: var(--font-nunito);
 }
 
 .noNoteSelected {
     margin: auto 0;
     padding: 0;
 
-    font-size: var(--font-secondary-title-size);
+    font-size: var(--secondary-title-font-size);
     font-style: italic;
 }
 
@@ -34,7 +34,7 @@
 
     width: 100%;
 
-    font-size: var(--font-secondary-title-size);
+    font-size: var(--secondary-title-font-size);
     font-weight: bold;
     line-height: 1.2;
 
@@ -57,7 +57,7 @@
 .noteTextArea {
     box-sizing: border-box;
 
-    font-size: var(--font-body-size);
+    font-size: var(--body-font-size);
     line-height: 1.5;
 
     width: 100%;

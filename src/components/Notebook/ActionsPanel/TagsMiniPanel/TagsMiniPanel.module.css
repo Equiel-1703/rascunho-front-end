@@ -49,8 +49,8 @@
 .tagsMiniPanel p {
     text-align: center;
 
-    font-family: var(--font-notebook);
-    font-size: var(--font-body-size);
+    font-family: var(--font-fuzzy-bubbles);
+    font-size: var(--body-font-size);
 }
 
 .tagsMenuOpen {
@@ -68,8 +68,8 @@
 
     border-radius: 20px;
 
-    font-family: var(--font-notebook);
-    font-size: var(--font-body-size);
+    font-family: var(--font-fuzzy-bubbles);
+    font-size: var(--body-font-size);
 
     cursor: default;
 }
@@ -87,7 +87,7 @@
 
     color: white;
 
-    font-family: var(--font-notebook);
+    font-family: var(--font-fuzzy-bubbles);
     font-size: 12pt;
 
     cursor: default;
