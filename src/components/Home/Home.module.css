@@ -1,9 +1,18 @@
 .unexpectedError {
     font-family: 'Homemade Apple', cursive;
     font-size: 2rem;
-    
+
     color: red;
     font-weight: bold;
+}
+
+.mainNotebook {
+    padding: 2rem;
+    text-align: center;
+
+    box-sizing: border-box;
+
+    height: 100vh;
 }
 
 .main {
@@ -12,7 +21,6 @@
 
     box-sizing: border-box;
 
-    min-height: 100vh;
     height: max-content;
 }
 
@@ -42,7 +50,7 @@
     border-radius: 50px;
 }
 
-.hero > img {
+.hero>img {
     width: 100%;
     height: auto;
 
@@ -215,7 +223,7 @@
         flex-direction: column;
     }
 
-    .hero > img {
+    .hero>img {
         margin: 0 0 2rem 0;
         max-width: 500px;
     }
