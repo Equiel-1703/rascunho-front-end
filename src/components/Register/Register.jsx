@@ -1,34 +1,30 @@
-import styles from './Login.module.css';
+import styles from './Register.module.css';
 
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { ValidationErrors, BadCredentialsError } from '../../services/BackendApi';
-import { useAuthContext } from '../AuthContext/AuthContext';
+import BackendApi, { ValidationErrors } from '../../services/BackendApi';
 
 function Login() {
-    const [loginUsername, setLoginUsername] = useState('');
-    const [loginPassword, setLoginPassword] = useState('');
+    const [registerUsername, setRegisterUsername] = useState('');
+    const [registerPassword, setRegisterPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
     const [errors, setErrors] = useState({});
 
     const navigate = useNavigate();
-    const authContext = useAuthContext();
 
     const submitLogin = async (event) => {
         event.preventDefault();
         setErrors({}); // Clear previous errors
 
         try {
-            await authContext.login(loginUsername, loginPassword);
+            await BackendApi.registerUser(registerUsername, registerPassword, confirmPassword);
 
             // Redirect to home page after successful login
             navigate('/');
         } catch (error) {
             if (error instanceof ValidationErrors) {
                 setErrors(error.validationErrors);
-            }
-            else if (error instanceof BadCredentialsError) {
-                setErrors({ password: error.message }); // This will show error near password field
             }
             else {
                 alert('An unexpected error occurred. Please try again later.\nError details: ' + error.message);
@@ -47,8 +43,8 @@ function Login() {
                         type='text'
                         name='username'
                         placeholder='Username'
-                        onChange={(e) => setLoginUsername(e.target.value)}
-                        value={loginUsername}
+                        onChange={(e) => setRegisterUsername(e.target.value)}
+                        value={registerUsername}
                     />
                     {errors.username && (
                         <div className={styles.error}>
@@ -65,12 +61,30 @@ function Login() {
                         type='password'
                         name='password'
                         placeholder='Senha'
-                        onChange={(e) => setLoginPassword(e.target.value)}
-                        value={loginPassword}
+                        onChange={(e) => setRegisterPassword(e.target.value)}
+                        value={registerPassword}
                     />
                     {errors.password && (
                         <div className={styles.error}>
                             {errors.password}
+                        </div>
+                    )}
+                </div>
+
+                <div className={styles.loginInput}>
+                    <label htmlFor='confirmPassword'>
+                        Confirme a Senha:
+                    </label>
+                    <input
+                        type='password'
+                        name='confirmPassword'
+                        placeholder='Confirme a Senha'
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        value={confirmPassword}
+                    />
+                    {errors.confirmPassword && (
+                        <div className={styles.error}>
+                            {errors.confirmPassword}
                         </div>
                     )}
                 </div>
@@ -80,15 +94,15 @@ function Login() {
                     onClick={submitLogin}
                     className={styles.btn}
                 >
-                    Log in
+                    Crie sua Conta
                 </button>
 
                 <button
                     type='button'
-                    onClick={() => navigate('/register')}
+                    onClick={() => navigate('/login')}
                     className={styles.btn}
                 >
-                    Não tem uma conta? Faça já!
+                    Já tem uma conta? Faça o Login
                 </button>
             </form>
         </main>

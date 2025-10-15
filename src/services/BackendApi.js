@@ -172,6 +172,63 @@ class BackendApi {
     }
 
     /**
+     * Attempts to register a new user with the provided username, password, and confirmPassword.
+     *
+     * If the registration is successful, the function resolves without returning any value.
+     * 
+     * In case of validation errors, a ValidationErrors exception is thrown containing the validation errors from the server.
+     * For other errors, a generic Error is thrown with the status code.
+     * @param {string} username - The desired username for the new user.
+     * @param {string} password - The desired password for the new user.
+     * @param {string} confirmPassword - The confirmation of the desired password.
+     * @returns {Promise<void>} A promise that resolves if the registration is successful.
+     * @throws {ValidationErrors} If there are validation errors from the server or if passwords do not match.
+     * @throws {Error} If the registration fails for other reasons.
+     */
+    async registerUser(username, password, confirmPassword) {
+        if (this.#debug) {
+            console.log('[BackendApi] Attempting to register user.');
+        }
+
+        try {
+            if (password !== confirmPassword) {
+                throw new ValidationErrors('Validation errors occurred', [
+                    { field: 'confirmPassword', message: 'As senhas não coincidem' }
+                ]);
+            }
+
+            await this.#axiosApi.post('/users', { username, password });
+
+            if (this.#debug) {
+                console.log('[BackendApi] User registered successfully!');
+            }
+
+            return;
+        } catch (error) {
+            if (error.response) {
+                const status = error.response.status;
+
+                // A bad request indicates validation errors
+                if (status === StatusCodes.BAD_REQUEST) {
+                    if (this.#debug) {
+                        console.warn('[BackendApi] Validation errors occurred during registration');
+                    }
+
+                    throw new ValidationErrors('Validation errors occurred', error.response.data);
+                }
+
+                // Other errors
+                else {
+                    throw new Error(`Registration failed with status: ${error.response.status} (${getReasonPhrase(error.response.status)})`);
+                }
+            } else {
+                // Network or other errors
+                throw new Error(`Registration failed: ${error.message}`);
+            }
+        }
+    }
+
+    /**
      * Retrieves the username and userId from the stored JWT token in local storage.
      * 
      * @returns {Object} An object containing:
