@@ -30,7 +30,7 @@ function Header() {
                             }
                         }
                     >
-                        <img src="/src/imgs/exit.png" alt="" />
+                        <img src="/exit.png" alt="" />
                     </button>
                 </div>
             }
