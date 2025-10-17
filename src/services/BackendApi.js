@@ -24,7 +24,10 @@ class BadCredentialsError extends Error {
  * It includes functionality for user authentication and error handling.
  */
 class BackendApi {
-    #baseUrl = 'https://localhost:8443/api';
+    // This will get the backend base URL from environment variable VITE_API_URL
+    // In local development, it should be set in the .env.local file
+    // For production, it should be set in the hosting environment
+    #baseUrl = import.meta.env.VITE_API_URL;
 
     #debug = false;
     #authTokenKey = 'authToken';

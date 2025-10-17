@@ -27,7 +27,7 @@ function AuthContext({ children }) {
     // Yes -> set username
     // No -> redirect to login page (the token is expired or doesn't exists)
     useEffect(() => {
-        BackendApi.setDebugMode(true);
+        BackendApi.setDebugMode(import.meta.env.VITE_DEBUG === 'true');
 
         const handleAuth = async () => {
             let checkLoginResult;
