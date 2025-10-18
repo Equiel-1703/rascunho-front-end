@@ -6,7 +6,8 @@ This is the front-end repository for [Rascunho](https://rascunho-front-end-produ
 
 For the back-end, visit the [Rascunho Back‑End repository](https://github.com/Equiel-1703/rascunho).
 
-<img width="1919" height="890" alt="image" src="https://github.com/user-attachments/assets/ce931e3d-a1f9-48c1-bf28-83464d0e290a" />
+
+<img width="1011" height="984" alt="rascunho-full-print" src="https://github.com/user-attachments/assets/7b9c82d8-b11a-44e6-8d28-62400a1991e2" />
 
 
 <p align="center">
@@ -17,12 +18,16 @@ For the back-end, visit the [Rascunho Back‑End repository](https://github.com/
 </p>
 
 ## Overview
-I built this front-end application using React and Vite for Rascunho. This was part of my first full-stack experience, where I developed both the front-end and back-end components for the project!
+Rascunho is a fast and easy way to create annotations and access them anywhere!
+
+<img width="1163" height="769" alt="image" src="https://github.com/user-attachments/assets/df61e2e4-ae03-4b15-954a-88168cc1e511" />
+
+I built this application as part of my first full-stack web development experience, where I developed both the front-end and back-end components for the project!
 
 ## Tools I used
 - Front-end: React + Vite, React DOM, React Router
-- Networking: Axios
-- Utilities: http-status-codes, jwt-decode
+- Interface with back-end: Axios
+- Back-end: Java Spring Boot
 
 ## Languages
 - JavaScript: 77.2%
