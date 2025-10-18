@@ -2,7 +2,7 @@ import styles from './CriarTag.module.css';
 
 import { useState } from 'react';
 
-import BackendApi from '../../../../services/BackendApi';
+import BackendApi, { DuplicateTagNameError } from '../../../../services/BackendApi';
 
 function CriarTag({ userId, callback }) {
     const [loading, setLoading] = useState(false);
@@ -19,6 +19,13 @@ function CriarTag({ userId, callback }) {
 
             setLoading(false);
         } catch (error) {
+            if (error instanceof DuplicateTagNameError) {
+                alert("Já existe uma tag com esse nome. Por favor, renomeie a tag após criá-la.");
+            } else {
+                alert("Ocorreu um erro ao criar a nova tag. Por favor, tente novamente.");
+            }
+
+            setLoading(false);
             console.error("[CriarTag] An error occurred while creating a new tag: ", error);
         }
     };

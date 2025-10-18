@@ -19,6 +19,14 @@ class BadCredentialsError extends Error {
     }
 }
 
+class DuplicateTagNameError extends Error {
+    constructor(message) {
+        super(message);
+
+        this.name = 'DuplicateTagNameError';
+    }
+}
+
 /**
  * This class provides methods to interact with the backend.
  * It includes functionality for user authentication and error handling.
@@ -624,6 +632,10 @@ class BackendApi {
                 console.warn('[BackendApi] Create tag request failed');
             }
 
+            if (error.response && error.response.status === StatusCodes.CONFLICT) {
+                throw new DuplicateTagNameError('A tag with this name already exists.');
+            }
+
             throw new Error(`Create tag failed with status: ${response.status} (${getReasonPhrase(response.status)})`);
         }
     }
@@ -690,5 +702,5 @@ class BackendApi {
     }
 }
 
-export { ValidationErrors, BadCredentialsError };
+export { ValidationErrors, BadCredentialsError, DuplicateTagNameError };
 export default new BackendApi;
