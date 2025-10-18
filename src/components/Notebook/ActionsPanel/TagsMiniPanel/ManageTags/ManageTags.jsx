@@ -31,8 +31,11 @@ function renderTagList(tags, onTagClick, conditionToShow = null) {
 
 function ManageTags({ isOpen, onClose, currentTags, allTags, onSave }) {
     if (!isOpen) {
+        document.body.classList.remove('no-scroll');
         return null;
     }
+
+    document.body.classList.add('no-scroll');
 
     const [tagsToAdd, setTagsToAdd] = useState([]);
     const [tagsToRemove, setTagsToRemove] = useState([]);

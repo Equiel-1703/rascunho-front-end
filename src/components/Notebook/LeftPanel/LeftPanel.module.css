@@ -78,6 +78,9 @@
 
     overflow-y: auto;
     overflow-x: clip;
+
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-header) transparent;
 }
 
 .tagFilterBanner {
