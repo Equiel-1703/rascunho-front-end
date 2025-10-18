@@ -7,7 +7,7 @@ import MainPanel from './MainPanel/MainPanel.jsx';
 import ActionsPanel from './ActionsPanel/ActionsPanel.jsx';
 import { WindowSize } from '../WindowSize/WindowSize.jsx';
 
-import { useState, useRef, useLayoutEffect } from 'react';
+import { useState, useRef, useLayoutEffect, useEffect } from 'react';
 
 function Notebook() {
     const { width, _ } = WindowSize();
@@ -16,6 +16,7 @@ function Notebook() {
     const mainContainerRef = useRef(null);
     const [mainContainerHeight, setMainContainerHeight] = useState(0);
 
+    // This is used to keep track of the main container height for the mobile left panel
     useLayoutEffect(() => {
         const mainContainer = mainContainerRef.current;
         if (!mainContainer) return;
@@ -26,15 +27,41 @@ function Notebook() {
         });
 
         resizeObserver.observe(mainContainer);
-        
+
         // Cleanup on unmount
         return () => {
             resizeObserver.disconnect();
         };
-    }, []); // Runs once on mount
+    }, []);
+
+    // Scroll to the notebook on mount
+    useEffect(() => {
+        if (mainContainerRef.current) {
+            const parent = mainContainerRef.current.parentElement;
+
+            parent.scrollIntoView({ behavior: 'smooth' });
+        }
+    }, []);
 
     const [leftMenuOpen, setLeftMenuOpen] = useState(false);
     const toggleLeftMenu = () => setLeftMenuOpen(!leftMenuOpen);
+
+    // Toggle no-scroll class on body based on left menu state
+    useEffect(() => {
+        if (isMobile) {
+            if (leftMenuOpen) {
+                document.body.classList.add('no-scroll');
+            } else {
+                document.body.classList.remove('no-scroll');
+            }
+        } else {
+            document.body.classList.remove('no-scroll');
+        }
+
+        return () => {
+            document.body.classList.remove('no-scroll');
+        };
+    }, [leftMenuOpen, isMobile]);
 
     return (
         <div ref={mainContainerRef} className={styles.mainContainer}>

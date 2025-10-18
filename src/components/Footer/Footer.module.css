@@ -1,6 +1,6 @@
 .footer {
     background-color: var(--color-header);
-    background-image: url('/src/imgs/paper-texture.jpg');
+    background-image: url('/paper-texture.jpg');
     background-blend-mode: multiply;
     background-size: cover;
 

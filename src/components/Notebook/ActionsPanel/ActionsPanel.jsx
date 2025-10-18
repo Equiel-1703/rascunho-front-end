@@ -38,7 +38,7 @@ function ActionsPanel({ isMobile, toggleLeftMenu }) {
                         className={styles.leftMenuButton}
                         onClick={toggleLeftMenu}
                     >
-                        ☰
+                        <img src="/burger-menu.png" alt="Burger menu" />
                     </button>
                 )
             }

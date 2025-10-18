@@ -10,9 +10,9 @@
     padding: 2rem;
     text-align: center;
 
-    box-sizing: border-box;
-
     height: 100vh;
+
+    box-sizing: border-box;
 }
 
 .main {
@@ -48,10 +48,15 @@
 
     padding: 2rem;
     border-radius: 50px;
+
+    box-sizing: border-box;
+
+    width: 100%;
 }
 
 .hero>img {
     width: 100%;
+    min-width: 250px;
     height: auto;
 
     margin-right: 2rem;
@@ -61,7 +66,20 @@
     flex: 1;
 }
 
-.hero h2 {
+.heroText {
+    display: flex;
+    flex-direction: column;
+
+    flex: 2;
+
+    box-sizing: border-box;
+
+    width: 100%;
+}
+
+.heroText h2 {
+    text-align: left;
+
     font-family: var(--font-fuzzy-bubbles);
     font-size: 3.5rem;
 
@@ -71,9 +89,12 @@
 
     margin: 0;
     padding: 0;
+
+    overflow-wrap: break-word;
+    hyphens: auto;
 }
 
-.hero p {
+.heroText p {
     font-family: var(--font-nunito);
     font-size: 1.5rem;
 
@@ -84,20 +105,10 @@
     text-align: left;
 }
 
-.heroText {
-    display: flex;
-    flex-direction: column;
-
-    flex: 2;
-}
-
-.heroText h2 {
-    text-align: left;
-}
-
 .homeButton {
     font-family: var(--font-homemade-apple);
     font-size: 1.5rem;
+    line-height: 2.5rem;
     width: fit-content;
 
     padding: 0.5rem 2rem;
@@ -157,6 +168,9 @@
     text-align: right;
     color: black;
 
+    margin: 0;
+    margin-bottom: 2rem;
+
     padding-right: 1.5rem;
 }
 
@@ -210,10 +224,19 @@
     margin-bottom: 4rem;
 }
 
+.cta h2 {
+    margin: 0;
+    padding: 0;
+}
+
+.cta p {
+    margin: 2rem 0;
+}
+
 .cta button {
     background-color: purple;
     color: white;
-    margin-top: 4rem;
+    margin: 0;
 
     filter: drop-shadow(2px 4px 6px rgb(174, 0, 255));
 }
@@ -230,10 +253,14 @@
 
     .heroText h2 {
         text-align: center;
+
+        font-size: 2rem;
     }
 
     .heroText p {
         text-align: center;
+
+        font-size: 1.2rem;
     }
 
     .homeButton {
@@ -242,5 +269,34 @@
 
     .why {
         flex-direction: column;
+    }
+
+    .why .lastLine {
+        padding-bottom: 3rem;
+        margin: 2rem auto -2rem auto;
+
+        border-radius: 50px 50px 0 0;
+    }
+
+    .why p, .why h2 {
+        padding: 0;
+    }
+}
+
+@media (min-width: 901px) and (max-width: 1200px) {
+    .heroText h2 {
+        font-size: 2rem;
+    }
+
+    .heroText p {
+        font-size: var(--body-font-size);
+    }
+
+    .why p {
+        font-size: var(--body-font-size);
+    }
+
+    .cta p {
+        font-size: var(--body-font-size);
     }
 }

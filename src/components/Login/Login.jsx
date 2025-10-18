@@ -31,21 +31,23 @@ function Login() {
                 setErrors({ password: error.message }); // This will show error near password field
             }
             else {
-                alert('An unexpected error occurred. Please try again later.\nError details: ' + error.message);
+                alert('Ops! Um erro inesperado aconteceu :(\nPor favor, tente novamente mais tarde.\n\nErro: ' + error.message);
             }
         }
     }
 
     return (
-        <main>
+        <main className={styles.main}>
             <form>
                 <div className={styles.loginInput}>
-                    <label htmlFor='username'>
+                    <label htmlFor='username_input'>
                         Username:
                     </label>
                     <input
                         type='text'
                         name='username'
+                        id='username_input'
+                        autoComplete='on'
                         placeholder='Username'
                         onChange={(e) => setLoginUsername(e.target.value)}
                         value={loginUsername}
@@ -58,12 +60,14 @@ function Login() {
                 </div>
 
                 <div className={styles.loginInput}>
-                    <label htmlFor='password'>
+                    <label htmlFor='password_input'>
                         Senha:
                     </label>
                     <input
                         type='password'
                         name='password'
+                        id='password_input'
+                        autoComplete='on'
                         placeholder='Senha'
                         onChange={(e) => setLoginPassword(e.target.value)}
                         value={loginPassword}

@@ -1,12 +1,55 @@
 import styles from './Header.module.css';
 
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
+import { WindowSize } from '../WindowSize/WindowSize.jsx';
 import { useAuthContext } from '../AuthContext/AuthContext.jsx';
 
 function Header() {
     const authContext = useAuthContext();
     const navigate = useNavigate();
+
+    const { width, _ } = WindowSize();
+    const isMobile = width <= 768; // Mobile breakpoint
+
+    const userInfo = (
+        <div className={styles.userInfo}>
+            <p>{authContext.loggedUsername}</p>
+            <button
+                className={styles.logoutButton}
+                onClick={
+                    async () => {
+                        await authContext.logout();
+
+                        // Redirect to home page after logout
+                        navigate('/');
+                    }
+                }
+            >
+                <img src="/exit.png" alt="" />
+            </button>
+        </div>
+    );
+
+    const [isUserInfoMenuOpen, setIsUserInfoMenuOpen] = useState(false);
+    const [userInfoMenuAnimationClass, setUserInfoMenuAnimationClass] = useState('');
+
+    const animationTimeout = 300; // in milliseconds
+    const userInfoButtonClick = () => {
+        const newState = !isUserInfoMenuOpen;
+
+        if (newState) {
+            setUserInfoMenuAnimationClass(styles.slideDown);
+            setIsUserInfoMenuOpen(newState);
+        } else {
+            setUserInfoMenuAnimationClass(styles.slideUp);
+
+            setTimeout(() => {
+                setIsUserInfoMenuOpen(newState);
+            }, animationTimeout);
+        }
+    }
 
     return (
         <header className={styles.header}>
@@ -17,24 +60,35 @@ function Header() {
 
             {
                 (authContext.loggedUsername !== null) &&
-                <div className={styles.userInfo}>
-                    <p>{authContext.loggedUsername}</p>
-                    <button
-                        className={styles.logoutButton}
-                        onClick={
-                            async () => {
-                                await authContext.logout();
+                (
+                    isMobile ? (
+                        <div className={styles.userInfoMobileContainer}>
+                            <button
+                                className={styles.userInfoButtonMobile}
+                                onClick={userInfoButtonClick}
+                            >
+                                <img src="/drop-down.png" alt="Drop down arrow" />
+                            </button>
 
-                                // Redirect to home page after logout
-                                navigate('/');
+                            {
+                                isUserInfoMenuOpen && (
+                                    <div
+                                        className={
+                                            styles.userInfoMobile
+                                            + ` ${userInfoMenuAnimationClass}`
+                                        }
+                                    >
+                                        {userInfo}
+                                    </div>
+                                )
                             }
-                        }
-                    >
-                        <img src="/exit.png" alt="" />
-                    </button>
-                </div>
+                        </div>
+                    ) : (
+                        userInfo
+                    )
+                )
             }
-        </header>
+        </header >
     );
 }
 

@@ -29,10 +29,10 @@
 
     background-color: #ec5e93;
 
-    font-family: var(--font-indie-flower);
-    font-weight: 400;
-    font-size: 2rem;
     color: white;
+
+    padding: 0;
+    margin: 0;
 }
 
 .leftMenuButton:hover {
@@ -42,4 +42,10 @@
 
 .leftMenuButton:active {
     background-color: #ec5e93;
+}
+
+.leftMenuButton img {
+    padding-top: 3px;
+    width: 60%;
+    height: 60%;
 }
